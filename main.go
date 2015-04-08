@@ -6,41 +6,26 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
     "html/template"
-    "./models"
+//    "./models"
 )
 
-type Person struct {
-    Name string
-    Age int
+func render(name string, data interface{}, w http.ResponseWriter) {
+    t, err := template.ParseFiles("templates/"+name+".tmpl")
+    if err != nil {
+        panic("Error when parsing template `"+name+"`. Error message: "+err.Error())
+    }
+
+    t.Execute(w, data)
+
 }
-
-type Stat struct {
-    Hits int
-}
-
-var counter int = 0
-
-const temp = `
-Hello, {{.Name}}!
-I'm {{.Age}} old.
-
-You just done {{.Hits}} hit!
-`
 
 func rootAction(w http.ResponseWriter, r *http.Request) {
-    t := template.New("test")
-    t, _ = t.Parse(temp)
-    t.Execute(w, Person{Name:"Test", Age:22})
-	counter++
 
-	fmt.Println(r)
+    render("index", struct{Text, Name string}{"index page!", "Vlad"}, w)
 }
 
 func blogAction(w http.ResponseWriter, r *http.Request) {
-    posts := models.Post{}
-    fmt.Println(posts.GetLast())
-    fmt.Println(posts.GetFirst())
-    fmt.Println(posts.GetAll())
+    render("post", struct{Text, Name string}{"posts page!", "Vlad"}, w)
 }
 
 func main() {
