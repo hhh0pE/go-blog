@@ -2,30 +2,42 @@
 package main
 
 import (
+	"./models"
 	"fmt"
 	"github.com/gorilla/mux"
+	"html/template"
 	"net/http"
-    "html/template"
-//    "./models"
 )
 
 func render(name string, data interface{}, w http.ResponseWriter) {
-    t, err := template.ParseFiles("templates/"+name+".tmpl")
-    if err != nil {
-        panic("Error when parsing template `"+name+"`. Error message: "+err.Error())
-    }
+	t, err := template.ParseFiles("templates/" + name + ".tmpl")
+	if err != nil {
+		panic("Error when parsing template `" + name + "`. Error message: " + err.Error())
+	}
 
-    t.Execute(w, data)
+	t.Execute(w, data)
 
 }
 
 func rootAction(w http.ResponseWriter, r *http.Request) {
-
-    render("index", struct{Text, Name string}{"index page!", "Vlad"}, w)
+    post_model := models.Post{}
+    posts := post_model.GetAll()
+	render("index", posts, w)
 }
 
-func blogAction(w http.ResponseWriter, r *http.Request) {
-    render("post", struct{Text, Name string}{"posts page!", "Vlad"}, w)
+func viewAction(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	post_url := vars["post_url"]
+
+	posts := models.Post{}
+	post, exist := posts.GetByUrl(post_url)
+
+    if !exist {
+        http.NotFound(w, r)
+        return
+    }
+
+	render("post", post, w)
 }
 
 func main() {
@@ -33,7 +45,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", rootAction)
-    r.HandleFunc("/blog/", blogAction)
+	r.HandleFunc("/{post_url}/", viewAction)
 
 	err := http.ListenAndServe(":9000", r)
 	if err != nil {
