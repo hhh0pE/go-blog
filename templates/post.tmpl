@@ -5,6 +5,6 @@
 <body>
 <h1>{{.Title}}</h1>
 <p>{{.Content}}</p>
-{{.Date}} {{.Time}}
+{{.Date.Format "02.01.2006"}} {{.Time.Format "03:04:05"}}
 </body>
 </html>
