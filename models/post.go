@@ -1,12 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"time"
+    "fmt"
 )
 
 type Post struct {
-	id           int
+	Id           int
 	Content      string
 	Title        string
 	Url          string
@@ -16,55 +16,53 @@ type Post struct {
 }
 
 func (p Post) GetLast() Post {
-	result := Post{}
-	err := DB.QueryRow("SELECT * FROM posts ORDER BY date,time DESC LIMIT 1").Scan(&result.id, &result.Content, &result.Viewed_count, &result.Title, &result.Url, &result.Date, &result.Time)
-	if err != nil {
-		fmt.Println("Error when selecting GetLast() from table `blog`. " + err.Error())
-	}
+    var result Post
+    DB.First(&result)
 
 	return result
 }
 
 func (p Post) GetFirst() Post {
-	result := Post{}
-	err := DB.QueryRow("SELECT * FROM posts ORDER BY date,time ASC LIMIT 1").Scan(&result.id, &result.Content, &result.Viewed_count, &result.Title, &result.Url, &result.Date, &result.Time)
-	if err != nil {
-		fmt.Println("Error when selecting GetFirst() from table `blog`. " + err.Error())
-	}
+	var result Post
+    DB.Last(&result)
 
 	return result
 }
 
 func (p Post) GetAll() []Post {
-	rows, err := DB.Query("SELECT * FROM posts ORDER BY date,time DESC")
-	if err != nil {
-		fmt.Println("Error when selecting GetAll() from table `blog`. " + err.Error())
-	}
-
 	var results []Post
-
-	for rows.Next() {
-		result := Post{}
-		rows.Scan(&result.id, &result.Content, &result.Viewed_count, &result.Title, &result.Url, &result.Date, &result.Time)
-		results = append(results, result)
-	}
+    DB.Find(&results)
 
 	return results
 }
 
 func (p Post) GetByUrl(url string) (Post, bool) {
-    sql := "SELECT * FROM posts WHERE url = '"+ url + "'"
-	rows, err := DB.Query(sql)
-	if err != nil {
-		fmt.Println("Error when select post by url. Error: " + err.Error())
-	}
-
     var result Post
+    query := DB.Where("url = ?", url).First(&result)
 
-    ok := rows.Next()
-    if ok {
-        rows.Scan(&result.id, &result.Content, &result.Viewed_count, &result.Title, &result.Url, &result.Date, &result.Time)
+    return result, query.RowsAffected > 0
+}
+
+func (p Post) GetNextLink(id int) string {
+    var link string
+    row := DB.Table("posts").Select("url").Where("id > ?", id).Limit(1).Row()
+    err := row.Scan(&link)
+
+    if err != nil {
+        fmt.Printf("Next link of post ID#%d not found\n", id)
     }
 
-    return result, ok
+    return link
+}
+
+func (p Post) GetPrevLink(id int) string {
+    var link string
+    row := DB.Table("posts").Select("url").Where("id < ?", id).Limit(1).Row()
+    err := row.Scan(&link)
+
+    if err != nil {
+        fmt.Printf("Prev link of post ID#%d not found\n", id)
+    }
+
+    return link
 }
