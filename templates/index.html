@@ -1,8 +1,5 @@
-<html>
-<head>
-    <title>Lesnoy.name blog!</title>
-</head>
-<body>
+{{ define "title"}} {{.Title}} {{end}}
+{{ define "content"}}
     <p>Welcome on my personal blog written with GoLang!</p>
     <p>All of my steps I'm describing in this blog and comitting on gihtib repository.</p>
     <p>I hope it will be helpful for you. Enjoy my blog and GoLang ;)</p>
@@ -13,5 +10,4 @@
             <a href="/{{.Url}}/">Read more</a>
         </div>
     {{ end }}
-</body>
-</html>
+{{ end }}
