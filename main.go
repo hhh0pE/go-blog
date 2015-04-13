@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
+	"net/url"
 )
 
 func render(name string, data interface{}, w http.ResponseWriter) {
@@ -26,6 +27,19 @@ func render(name string, data interface{}, w http.ResponseWriter) {
 func rootAction(w http.ResponseWriter, r *http.Request) {
 	post_model := models.Post{}
 	posts := post_model.GetAll()
+
+	for i := 0; i < len(posts); i++ {
+		var err error
+		var post_url *url.URL
+		post_url, err = router.Get("post").URL("post_url", posts[i].Url)
+		if err != nil {
+			posts[i].Url = ""
+		} else {
+			posts[i].Url = post_url.String()
+		}
+
+	}
+
 	render("index", struct {
 		Title string
 		Posts []models.Post
@@ -38,8 +52,22 @@ func viewAction(w http.ResponseWriter, r *http.Request) {
 
 	posts := models.Post{}
 	post, is_post_exist := posts.GetByUrl(post_url)
-	next_post_link := posts.GetNextLink(post.Id)
-	prev_post_link := posts.GetPrevLink(post.Id)
+	next_post_link, next_err := router.Get("post").URL("post_url", posts.GetNextLink(post.Id))
+	prev_post_link, prev_err := router.Get("post").URL("post_url", posts.GetPrevLink(post.Id))
+
+	var next_post_url, prev_post_url string
+
+	if next_err == nil {
+		next_post_url = next_post_link.String()
+	} else {
+		next_post_url = ""
+	}
+
+	if prev_err == nil {
+		prev_post_url = prev_post_link.String()
+	} else {
+		prev_post_url = ""
+	}
 
 	if !is_post_exist {
 		http.NotFound(w, r)
@@ -50,18 +78,19 @@ func viewAction(w http.ResponseWriter, r *http.Request) {
 		Post      models.Post
 		Prev_link string
 		Next_link string
-	}{post, prev_post_link, next_post_link}, w)
+	}{post, prev_post_url, next_post_url}, w)
 }
+
+var router = mux.NewRouter()
 
 func main() {
 	fmt.Println("starting server..")
-	r := mux.NewRouter()
 
-	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
-	r.HandleFunc("/", rootAction)
-	r.HandleFunc("/post/{post_url}/", viewAction)
+	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
+	router.HandleFunc("/", rootAction).Name("index")
+	router.HandleFunc("/article/{post_url}/", viewAction).Name("post")
 
-	err := http.ListenAndServe(":9000", r)
+	err := http.ListenAndServe(":9000", router)
 	if err != nil {
 		fmt.Println("Error serving port 9000")
 		fmt.Println(err)
