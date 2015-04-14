@@ -31,7 +31,7 @@ func (p Post) GetFirst() Post {
 
 func (p Post) GetAll() []Post {
 	var results []Post
-    DB.Find(&results)
+    DB.Order("date desc").Find(&results)
 
 	return results
 }

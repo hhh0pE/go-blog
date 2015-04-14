@@ -38,6 +38,12 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 			posts[i].Url = post_url.String()
 		}
 
+		// make description of the post by cropping the content
+
+		if len(posts[i].Content) > 500 {
+			posts[i].Content = posts[i].Content[:500] + ".."
+		}
+
 	}
 
 	render("index", struct {
@@ -75,10 +81,12 @@ func viewAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render("post", struct {
+		Content   template.HTML
+		Title     string
 		Post      models.Post
 		Prev_link string
 		Next_link string
-	}{post, prev_post_url, next_post_url}, w)
+	}{template.HTML(post.Content), post.Title, post, prev_post_url, next_post_url}, w)
 }
 
 var router = mux.NewRouter()

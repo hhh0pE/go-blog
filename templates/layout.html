@@ -1,0 +1,24 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ template "title" .}}</title>
+    <link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+    <link href="/assets/css/main.css?ver=1.0" type="text/css" rel="stylesheet" />
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <a href="/" class="title">Vladislav Lesnoy's blog</a>
+            <div class="description">First blog when its repository more interesting than its content :)</div>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="container">
+            {{ template "content" . }}
+        </div>
+    </div>
+</body>
+</html>
+{{end}}

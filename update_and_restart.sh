@@ -1,0 +1,1 @@
+pidof blog.lesnoy.name | xargs kill -9 && go fmt && go build && ./blog.lesnoy.name &
