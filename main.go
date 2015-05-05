@@ -2,92 +2,64 @@
 package main
 
 import (
-	"./models"
 	"fmt"
 	"github.com/gorilla/mux"
-	"html/template"
+	"github.com/hhh0pE/go-blog/models"
 	"net/http"
-	"net/url"
+	//"github.com/justinas/alice" // lightweight middleware
+	//	"net/url"
+	"html/template"
 )
 
-func render(name string, data interface{}, w http.ResponseWriter) {
-
-	t, err := template.ParseFiles("templates/"+name+".html", "templates/layout.html")
+func render(model interface{}, template_name string, writer http.ResponseWriter) {
+	template, err := template.ParseFiles("templates/"+template_name+".html", "templates/layout.html")
 	if err != nil {
-		panic("Error when parsing template `" + name + "`. Error message: " + err.Error())
+		panic("Error when parsing template " + template_name + "`. Error message: " + err.Error())
 	}
 
-	err = t.ExecuteTemplate(w, "layout", data)
+	err = template.ExecuteTemplate(writer, "layout", model)
 	if err != nil {
-		fmt.Println("Error when render page " + name + "; Error: " + err.Error())
+		panic("Error when execute template" + err.Error())
 	}
-
 }
 
 func rootAction(w http.ResponseWriter, r *http.Request) {
-	post_model := models.Post{}
-	posts := post_model.GetAll()
+	homepage := models.HomePage{}
+	homepage.GetByUrl("/")
 
-	for i := 0; i < len(posts); i++ {
-		var err error
-		var post_url *url.URL
-		post_url, err = router.Get("post").URL("post_url", posts[i].Url)
-		if err != nil {
-			posts[i].Url = ""
-		} else {
-			posts[i].Url = post_url.String()
-		}
+	all_posts := models.Post{}
+	homepage.Posts = all_posts.GetAll()
 
-		// make description of the post by cropping the content
-
-		if len(posts[i].Content) > 500 {
-			posts[i].Content = posts[i].Content[:500] + ".."
-		}
-
-	}
-
-	render("index", struct {
-		Title string
-		Posts []models.Post
-	}{"Lesnoy's blog | main page", posts}, w)
+	render(homepage, "index", w)
 }
 
-func viewAction(w http.ResponseWriter, r *http.Request) {
+func postAction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	post_url := vars["post_url"]
+	category_url, post_url := vars["category"], vars["post_url"]
 
-	posts := models.Post{}
-	post, is_post_exist := posts.GetByUrl(post_url)
-	next_post_link, next_err := router.Get("post").URL("post_url", posts.GetNextLink(post.Id))
-	prev_post_link, prev_err := router.Get("post").URL("post_url", posts.GetPrevLink(post.Id))
-
-	var next_post_url, prev_post_url string
-
-	if next_err == nil {
-		next_post_url = next_post_link.String()
-	} else {
-		next_post_url = ""
-	}
-
-	if prev_err == nil {
-		prev_post_url = prev_post_link.String()
-	} else {
-		prev_post_url = ""
-	}
-
-	if !is_post_exist {
+	category_page := models.Page{}
+	err := category_page.GetByUrl(category_url)
+	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
 
-	render("post", struct {
-		Content   template.HTML
-		Title     string
-		Post      models.Post
-		Prev_link string
-		Next_link string
-	}{template.HTML(post.Content), post.Title, post, prev_post_url, next_post_url}, w)
+	post_page := models.Post{}
+	err = post_page.GetByUrl(post_url)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	fmt.Println(post_page)
+
+	render(post_page, "post", w)
 }
+
+func categoryAction(w http.ResponseWriter, r *http.Request) {
+
+}
+
 
 var router = mux.NewRouter()
 
@@ -96,7 +68,8 @@ func main() {
 
 	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/", rootAction).Name("index")
-	router.HandleFunc("/article/{post_url}/", viewAction).Name("post")
+	router.HandleFunc("/{category}/", categoryAction).Name("category")
+	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
 
 	err := http.ListenAndServe(":9000", router)
 	if err != nil {

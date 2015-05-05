@@ -1,13 +1,11 @@
-{{ define "title"}}{{.Post.Title}}{{end}}
+{{ define "title"}}{{.Metatitle}}{{end}}
 {{ define "content"}}
     <h1>{{.Title}}</h1>
-    <p>{{.Content}}</p>
-    <p>{{.Post.Date.Format "02.01.2006"}} {{.Post.Time.Format "15:04:05"}}</p>
-    {{if (len .Prev_link) gt 0}}
-        <a href="{{.Prev_link}}">Previous post</a>
-    {{ end }}
-    |
-    {{if (len .Next_link) gt 0}}
-        <a href="{{.Next_link}}">Next post</a>
-    {{end}}
+    <p>{{.HTMLContent}}</p>
+    <p>{{.Date.Format "02.01.2006"}} {{.Time.Format "15:04:05"}}</p>
+    <div class="navigation">
+        <a href="{{.GetPrevPost.Permalink}}">{{.GetPrevPost.Title}}</a>
+        <a href="{{.GetNextPost.Permalink}}">{{.GetNextPost.Title}}</a>
+    </div>
+
 {{end}}

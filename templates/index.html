@@ -1,5 +1,4 @@
-{{ template "header" }}
-{{ define "title"}} {{.Title}} {{end}}
+{{ define "title"}} {{.Metatitle}} {{end}}
 {{ define "content"}}
     <div class="blog-info">
         <div>Technologies:
@@ -19,9 +18,9 @@
     </div>
     <div class="posts">
         {{range .Posts}}
-            <a href="{{.Url}}" class="post">
+            <a href="{{.Permalink}}" class="post">
                 <div class="title">{{.Title}}</div>
-                <div class="description">{{.Content}}</div>
+                <div class="description">{{.Description}}</div>
             </a>
         {{ end }}
     </div>
