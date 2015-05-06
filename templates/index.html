@@ -18,9 +18,9 @@
     </div>
     <div class="posts">
         {{range .Posts}}
-            <a href="{{.Permalink}}" class="post">
-                <div class="title">{{.Title}}</div>
-                <div class="description">{{.Description}}</div>
+            <a href="/{{.Permalink}}/" class="post">
+                <div class="title">{{.Metatitle}}</div>
+                <div class="description">{{.Metadescription}}</div>
             </a>
         {{ end }}
     </div>

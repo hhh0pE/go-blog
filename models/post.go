@@ -9,6 +9,8 @@ import (
 
 type Post struct {
     Page
+    Page_id int
+    ID  int
 	Title, Content string
 	CreationDate   time.Time
     Date time.Time
@@ -16,7 +18,13 @@ type Post struct {
 	Viewed_count   int
 }
 
+func (p *Post) AfterFind() (err error) {
+    p.Page.ID = p.Page_id
+    return
+}
+
 func (p Post) HTMLContent() template.HTML {
+
 	return template.HTML(p.Content)
 }
 
@@ -31,10 +39,6 @@ func (p Post) Description() template.HTML {
 	}
 
 	return template.HTML(shortDescription)
-}
-
-func (p Post) Permalink() string {
-	return p.Url
 }
 
 func (p Post) GetLast() Post {
@@ -53,22 +57,26 @@ func (p Post) GetFirst() Post {
 
 func (p Post) GetAll() []Post {
 	var results []Post
-	DB.Order("date desc").Find(&results)
+    pages, _ := DB.Raw("SELECT * FROM pages WHERE id IN(SELECT page_id FROM posts)").Rows()
+    for pages.Next() {
+        new_page := Post{}
+        pages.Scan(&new_page.Page.ID, &new_page.Parent_id, &new_page.Metatitle, &new_page.Metadescription, &new_page.Metakeywords, &new_page.Page.Url)
 
+        results = append(results, new_page)
+    }
 	return results
 }
 
-func (p Post) GetByUrl(url string) error {
+func (p *Post) GetByUrl(url string) error {
     p.Page.GetByUrl(url)
-	DB.Where("url = ?", url).First(&p)
-	//    fmt.Println(result.Title)
+    DB.Where("page_id = ?", p.Page.ID).First(&p)
 
 	return nil
 }
 
 func (p Post) GetNextPost() Post {
 	var result Post
-	query := DB.Select("url, title").Where("id > ?", p.ID).Limit(1).First(&result)
+	query := DB.Select("id, page_id, title").Where("id > ? AND page_id<>0", p.ID).Limit(1).First(&result)
 
 	fmt.Println(p.ID)
 	fmt.Println(query.Error)
@@ -77,7 +85,7 @@ func (p Post) GetNextPost() Post {
 
 func (p Post) GetPrevPost() Post {
 	var result Post
-	DB.Select("url, title").Where("id < ?", p.ID).Last(&result)
+	DB.Select("id, page_id, title").Where("id < ? AND page_id<>0", p.ID).Last(&result)
 
 	return result
 }

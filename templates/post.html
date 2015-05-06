@@ -4,8 +4,11 @@
     <p>{{.HTMLContent}}</p>
     <p>{{.Date.Format "02.01.2006"}} {{.Time.Format "15:04:05"}}</p>
     <div class="navigation">
-        <a href="{{.GetPrevPost.Permalink}}">{{.GetPrevPost.Title}}</a>
-        <a href="{{.GetNextPost.Permalink}}">{{.GetNextPost.Title}}</a>
+        {{ $prevPost := .GetPrevPost }}
+        {{ $nextPost := .GetNextPost }}
+
+        <a href="/{{$prevPost.Permalink}}/">{{$prevPost.Title}}</a>
+        <a href="/{{$nextPost.Permalink}}/">{{$nextPost.Title}}</a>
     </div>
 
 {{end}}

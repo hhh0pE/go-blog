@@ -51,15 +51,12 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(post_page)
-
 	render(post_page, "post", w)
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
 
 }
-
 
 var router = mux.NewRouter()
 
