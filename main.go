@@ -27,8 +27,8 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 	homepage := models.HomePage{}
 	homepage.GetByUrl("/")
 
-	all_posts := models.Post{}
-	homepage.Posts = all_posts.GetAll()
+	homepage.Posts = models.GetAllPosts()
+	homepage.Categories = models.GetAllCategories()
 
 	render(homepage, "index", w)
 }
@@ -37,7 +37,7 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	category_url, post_url := vars["category"], vars["post_url"]
 
-	category_page := models.Page{}
+	category_page := models.Category{}
 	err := category_page.GetByUrl(category_url)
 	if err != nil {
 		http.NotFound(w, r)

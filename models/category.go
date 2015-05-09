@@ -1,33 +1,13 @@
 package models
+import "github.com/hhh0pE/go-blog/models/db"
 
 type Category struct {
-	ID          int
-	Title, Slug string
+    db.Page
 }
 
-var Categories map[int]*Category
+func GetAllCategories() *[]Category {
+    categories := []Category{}
+    db.Connection.Table("pages").Where("template_id = 3").Find(&categories)
 
-func init() {
-	Categories = make(map[int]*Category)
-}
-
-func (c *Category) GetAll() []Category {
-	cats := []Category{}
-	DB.Find(&cats)
-
-	for id, cat := range cats {
-		Categories[id] = &cat
-	}
-	return cats
-}
-
-func GetCategoryByID(id int) *Category {
-	cat := Category{}
-	query := DB.Where("id = ?", id).First(&cat)
-
-	if query.RowsAffected == 0 {
-		return nil
-	}
-
-	return &cat
+    return &categories
 }

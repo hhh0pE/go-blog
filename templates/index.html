@@ -1,26 +1,17 @@
-{{ define "title"}} {{.Metatitle}} {{end}}
+{{ define "title"}} {{.Title}} {{end}}
 {{ define "content"}}
     <div class="blog-info">
-        <div>Technologies:
-            <a href="/tag/Go/">Go</a>
-            <a href="/tag/SQL/">SQL</a>
-            <a href="/tag/PostgreSQL">PostgreSQL</a>
-            <a href="/tag/PHP">PHP</a>
-            <a href="/tag/Wordpress/">Wordpress</a>
+        <div>Разделы:
+            {{ range .Categories }}
+                <a href="/{{.Permalink}}/">{{.Title}}</a>
+            {{ end }}
         </div>
-        <div>Sections:
-            <a href="/category/personal/">Personal</a>
-            <a href="/category/football/">Football</a>
-            <a href="/category/Programming/">Programming</a>
-            <a href="/category/Music/">Music</a>
-        </div>
-        <div>Chronology: <a href="/archive/2015/04/">April 2015</a></div>
     </div>
     <div class="posts">
         {{range .Posts}}
             <a href="/{{.Permalink}}/" class="post">
-                <div class="title">{{.Metatitle}}</div>
-                <div class="description">{{.Metadescription}}</div>
+                <div class="title">{{.Title}}</div>
+                <div class="description">{{.Description}}</div>
             </a>
         {{ end }}
     </div>
