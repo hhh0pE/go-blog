@@ -1,4 +1,5 @@
 {{ define "title"}} {{.Title}} {{end}}
+{{ define "head"}}{{end}}
 {{ define "content"}}
     <div class="blog-info">
         <div>Разделы:
@@ -11,7 +12,7 @@
         {{range .Posts}}
             <a href="/{{.Permalink}}/" class="post">
                 <div class="title">{{.Title}}</div>
-                <div class="description">{{.Description}}</div>
+                <div class="description">{{.HTMLDescription}}</div>
             </a>
         {{ end }}
     </div>

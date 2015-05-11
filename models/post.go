@@ -10,7 +10,6 @@ func (p Post) Next() Post {
     next_post := Post{}
     db.Connection.Table("pages").Where("id > ? and parent_id = ?", p.ID, p.Parent_id).First(&next_post)
 
-
     return next_post
 }
 
@@ -18,7 +17,6 @@ func (p Post) Prev() Post {
     prev_post := Post{}
 
     db.Connection.Table("pages").Where("id < ? and parent_id = ?", p.ID, p.Parent_id).Order("id DESC").First(&prev_post)
-
 
     return prev_post
 }

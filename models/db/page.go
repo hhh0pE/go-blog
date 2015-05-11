@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
     "html/template"
+    "regexp"
+    "strings"
 )
 
 type Page struct {
@@ -67,6 +69,17 @@ func (p Page) Permalink() string {
     return p.Url
 }
 
-func (p Page) HTML() template.HTML {
+func (p Page) HTMLContent() template.HTML {
     return template.HTML(p.Content)
+}
+
+func (p Page) MetaDescription() string {
+    return strings.Replace(p.Description, "\n", " ", -1)
+}
+
+func (p Page) HTMLDescription() template.HTML {
+    r, _ := regexp.Compile("(?mi)(.*?)$")
+    html_description := r.ReplaceAllString(p.Description, "<p>$1</p>")
+//    fmt.Println(html_description)
+    return template.HTML(html_description)
 }

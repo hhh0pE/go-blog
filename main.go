@@ -9,6 +9,7 @@ import (
 	//"github.com/justinas/alice" // lightweight middleware
 	//	"net/url"
 	"html/template"
+	"time"
 )
 
 func render(model interface{}, template_name string, writer http.ResponseWriter) {
@@ -51,11 +52,31 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    if post_page.Template_id == 5 { // redirect
+        new_post := models.Post{}
+        new_post.GetByID(post_page.Parent_id)
+        http.Redirect(w, r, "/"+new_post.Permalink()+"/", 301)
+        return
+    }
+
+	w.Header().Set("Last-Modified", post_page.Updated_at.Format(time.RFC1123))
+
 	render(post_page, "post", w)
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	category := models.Category{}
+	err := category.GetByUrl(vars["category"])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	category.Posts = category.GetAllPosts()
+
+	render(category, "category", w)
 }
 
 var router = mux.NewRouter()
@@ -68,9 +89,9 @@ func main() {
 	router.HandleFunc("/{category}/", categoryAction).Name("category")
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
 
-	err := http.ListenAndServe(":9000", router)
+	err := http.ListenAndServe(":9001", router)
 	if err != nil {
-		fmt.Println("Error serving port 9000")
+		fmt.Println("Error serving port 9001")
 		fmt.Println(err)
 	}
 }

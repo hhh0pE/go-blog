@@ -1,7 +1,11 @@
 {{ define "title"}}{{.Title}}{{end}}
+{{ define "head"}}
+    <meta name="description" content="{{.MetaDescription}}">
+    <meta name="keywords" content="{{.Keywords}}">
+{{end}}
 {{ define "content"}}
     <h1>{{.Title}}</h1>
-    <p>{{.HTML}}</p>
+    <p>{{.HTMLContent}}</p>
     <p>{{.Updated_at.Format "02.01.2006 15:04:05"}}</p>
     <div class="navigation">
         {{ $prevPost := .Prev }}
