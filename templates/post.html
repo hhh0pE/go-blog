@@ -4,15 +4,33 @@
     <meta name="keywords" content="{{.Keywords}}">
 {{end}}
 {{ define "content"}}
-    <h1>{{.Title}}</h1>
-    <p>{{.HTMLContent}}</p>
-    <p>{{.Updated_at.Format "02.01.2006 15:04:05"}}</p>
-    <div class="navigation">
-        {{ $prevPost := .Prev }}
-        {{ $nextPost := .Next }}
-
-        <a href="/{{$prevPost.Permalink}}/">{{$prevPost.Title}}</a>
-        <a href="/{{$nextPost.Permalink}}/">{{$nextPost.Title}}</a>
+    <div class="info">
+        <div class="topic"><span>Тема:</span> <a href="/{{.Parent.Permalink}}/"><h2>{{.Parent.Title}}</h2></a></div>
+        <div class="date"><span>Дата публикации:</span> <strong>{{.Created_at.Format "02.01.2006 15:04:05"}}</strong>
+        </div>
+        <div class="views-count">
+            {{.ViewedCountText}}
+        </div>
     </div>
 
+    <p>{{.HTMLContent}}</p>
+
+    
+    {{if (len .GetOtherInCategory) gt 0}}
+    <div class="category-posts">
+    Другие статьи по теме "{{.Parent.Title}}":
+    <ul>
+        {{range .GetOtherInCategory}}
+                <li><a href="/{{.Permalink}}/">{{.Title}}</a> ({{.ViewedCountText}})</li>
+        {{ end }}
+    </ul>
+    </div>
+    {{end}}
+{{end}}
+{{ define "footer"}}
+    {{with .CodeBG}}
+    <div class="code-bg">
+        {{.}}
+    </div>
+    {{end}}
 {{end}}

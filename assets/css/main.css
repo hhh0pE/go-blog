@@ -16,6 +16,39 @@ body {
     padding-bottom: 40px;
 
     border-bottom: 1px solid black;
+    position: relative;
+    z-index: 1;
+
+    background: rgba(255,255,255,0.7);
+}
+
+.code-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.code-bg pre.prettyprint {
+    border: none;
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
+    font-size: 10px;
+}
+
+.page-content pre.prettyprint {
+    border: none;
+    padding-left: 30px;
+    word-wrap: break-word;
+}
+
+.header h1 {
+    text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
+}
+
+body.homepage .header h1 {
+    font-family: 'Marck Script', cursive;
 }
 
 .header .title {
@@ -24,12 +57,48 @@ body {
     text-decoration: none;
     color: black;
     line-height: 50px;
+
 }
 
 .header .description {
-    color: gray;
     font-family: 'Open Sans', sans-serif;
     margin-top: 20px;
+
+}
+
+.page-content {
+    background: white;
+    z-index: 1;
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.page-content .info {
+    margin-bottom: 40px;
+}
+
+.page-content .topic a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.page-content .topic h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.page-content .category-posts {
+      border: 1px dotted black;
+      padding: 20px;
+      border-style: dashed;
+      display: inline-block;
+      vertical-align: top;
+}
+
+.page-content .category-posts ul {
+      margin: 0;
+      display: inline-block;
 }
 
 .blog-info {
@@ -49,7 +118,7 @@ body {
     display: inline-block;
     width: 100%;
 }
-.post {
+.posts .post {
     display: inline-block;
     padding: 10px;
     border: 1px solid gray;
@@ -64,18 +133,18 @@ body {
     vertical-align: top;
  }
 
- .post:hover {
+ .posts .post:hover {
     background: rgba(0,0,0,0.05);
     top: 3px;
  }
- .post:hover .title {
+ .posts .post:hover .title {
     font-size: 20px;
     top: auto;
     text-align: center;
     bottom: 102%;
  }
 
- .post .title {
+ .posts .post .title {
     position: absolute;
     top: -10px;
     display: inline-block;
@@ -88,7 +157,7 @@ body {
 
  @media screen and (max-width: 800px)
  {
-    .post {
+    .posts .post {
         width: 100%;
     }
  }
