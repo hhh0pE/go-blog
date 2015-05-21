@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
-    "net/url"
 )
 
 type Page struct {
@@ -65,19 +65,17 @@ func (p Page) Children() *[]Page {
 }
 
 func (p Page) Permalink() string {
-    if p.Url == "/" {
-        return p.Url
-    }
+	if p.Url == "/" {
+		return p.Url
+	}
 	if p.Parent_id > 0 {
 		return p.Parent().Url + "/" + url.QueryEscape(p.Url)
 	}
 
-    return url.QueryEscape(p.Url)
+	return url.QueryEscape(p.Url)
 }
 
 func (p Page) HTMLContent() template.HTML {
-	p.ViewedCount++
-	Connection.Save(p)
 	return template.HTML(p.Content)
 }
 
@@ -93,6 +91,10 @@ func (p Page) HTMLDescription() template.HTML {
 }
 
 func (p Page) AfterUpdate() (err error) {
-    p.Parent().Updated_at = p.Updated_at
-    return nil
+	p.Parent().Updated_at = p.Updated_at
+	return nil
+}
+
+func (p Page) Save() {
+	Connection.Save(p)
 }

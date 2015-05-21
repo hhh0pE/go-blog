@@ -9,8 +9,14 @@
         </div>
     </div>
     <div class="posts">
+        {{ $last_viewed_date := .LastViewedDate }}
+
         {{range .Posts}}
+            {{ if gt .Updated_at.Unix $last_viewed_date.Unix}}
+            <a href="/{{.Permalink}}/" class="post new">
+            {{else}}
             <a href="/{{.Permalink}}/" class="post">
+            {{end}}
                 <div class="title">{{.Title}}</div>
                 <div class="description">{{.HTMLDescription}}</div>
             </a>

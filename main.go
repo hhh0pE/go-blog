@@ -32,6 +32,19 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 	homepage.Posts = models.GetAllPosts()
 	homepage.Categories = models.GetAllCategories()
 
+	cook, err := r.Cookie("last-viewed")
+	if err == nil && cook != nil {
+		lv_date, lv_err := time.Parse(time.RFC3339, cook.Value)
+		if lv_err != nil {
+			fmt.Println(lv_err.Error())
+		}
+		homepage.LastViewedDate = lv_date
+	} else {
+		homepage.LastViewedDate = time.Now() // by default
+	}
+
+	http.SetCookie(w, &http.Cookie{Name: "last-viewed", Value: time.Now().Format(time.RFC3339), Expires: time.Now().AddDate(1, 0, 0)})
+
 	render(homepage, "index", w)
 }
 
@@ -60,6 +73,13 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cook, cookie_err := r.Cookie("av")
+	if cookie_err != nil && cook == nil {
+		post_page.ViewedCount++
+		post_page.Save()
+		http.SetCookie(w, &http.Cookie{Name: "av", Value: "1", Expires: time.Now().AddDate(1, 0, 0)})
+	}
+
 	w.Header().Set("Last-Modified", post_page.Updated_at.Format(time.RFC1123))
 
 	render(post_page, "post", w)
@@ -80,7 +100,7 @@ func categoryAction(w http.ResponseWriter, r *http.Request) {
 	render(category, "category", w)
 }
 
-func doSitemap() {
+func serverSitemap(w http.ResponseWriter, r *http.Request) {
 	categories := models.GetAllCategories()
 	posts := models.GetAllPosts()
 
@@ -103,6 +123,9 @@ func doSitemap() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
+	w.Header().Set("Content-Encoding", "gzip")
+	http.ServeFile(w, r, "public/sitemap.xml")
 }
 
 var router = mux.NewRouter()
@@ -110,14 +133,12 @@ var router = mux.NewRouter()
 func main() {
 	fmt.Println("starting server..")
 
-	doSitemap()
-
 	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/", rootAction).Name("index")
 	router.HandleFunc("/{category}/", categoryAction).Name("category")
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
 
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+	router.HandleFunc("/sitemap.xml", serverSitemap)
 
 	err := http.ListenAndServe(":9001", router)
 	if err != nil {
