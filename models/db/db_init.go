@@ -10,8 +10,8 @@ const (
 	DB_USER         = "blog"
 	DB_USERPASSWORD = "blogblog"
 	DB_DBNAME       = "blog"
-	//DB_HOST         = "54.93.171.33" // for development
-	DB_HOST         = "localhost" // for production
+	DB_HOST         = "54.93.171.33" // for development
+//	DB_HOST         = "localhost" // for production
 )
 
 var Connection gorm.DB

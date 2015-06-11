@@ -139,6 +139,9 @@ func main() {
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
 
 	router.HandleFunc("/sitemap.xml", serverSitemap)
+    router.HandleFunc("/robots.txt", func (w http.ResponseWriter, r *http.Request){
+        http.ServeFile(w, r, "public/robots.txt")
+    })
 
 	err := http.ListenAndServe(":9001", router)
 	if err != nil {

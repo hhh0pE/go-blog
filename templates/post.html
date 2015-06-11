@@ -1,4 +1,4 @@
-{{ define "title"}}{{.Title}}{{end}}
+{{ define "title"}}{{.Title}} :: {{.Parent.Title}}{{end}}
 {{ define "head"}}
     <meta name="description" content="{{.MetaDescription}}">
     <meta name="keywords" content="{{.Keywords}}">
@@ -6,7 +6,12 @@
 {{ define "content"}}
     <div class="info">
         <div class="topic"><span>Тема:</span> <a href="/{{.Parent.Permalink}}/"><h2>{{.Parent.Title}}</h2></a></div>
-        <div class="date"><span>Дата публикации:</span> <strong>{{.Created_at.Format "02.01.2006 15:04:05"}}</strong>
+        <div class="date">
+	  {{ if gt .Updated_at.Unix .Created_at.Unix}}
+	  <span>Дата последнего обновления:</span> <strong>{{.Updated_at.Format "02.01.2006 15:04:05"}}</strong>
+	  {{ else }}
+	  <span>Дата публикации:</span> <strong>{{.Created_at.Format "02.01.2006 15:04:05"}}</strong>
+	  {{ end }}
         </div>
         <div class="views-count">
             {{.ViewedCountText}}
