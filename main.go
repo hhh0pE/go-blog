@@ -13,11 +13,13 @@ import (
 	"time"
 )
 
-func render(model interface{}, template_name string, writer http.ResponseWriter) {
-	template, err := template.ParseFiles("templates/"+template_name+".html", "templates/layout.html")
+func render(model interface{}, templates []string, writer http.ResponseWriter) {
+	template, err := template.ParseFiles(templates...)
 	if err != nil {
-		panic("Error when parsing template " + template_name + "`. Error message: " + err.Error())
+		panic("Error when parsing templates " + templates[0] + "`. Error message: " + err.Error())
 	}
+
+    // place for middlewares
 
 	err = template.ExecuteTemplate(writer, "layout", model)
 	if err != nil {
@@ -45,7 +47,7 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{Name: "last-viewed", Value: time.Now().Format(time.RFC3339), Expires: time.Now().AddDate(1, 0, 0)})
 
-	render(homepage, "index", w)
+	render(homepage, []string{"templates/index.html", "templates/layout.html"}, w)
 }
 
 func postAction(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +84,7 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Last-Modified", post_page.Updated_at.Format(time.RFC1123))
 
-	render(post_page, "post", w)
+	render(post_page, post_page.GetTemplates(), w)
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +99,11 @@ func categoryAction(w http.ResponseWriter, r *http.Request) {
 
 	category.Posts = category.GetAllPosts()
 
-	render(category, "category", w)
+	render(category, category.GetTemplates(), w)
+}
+
+func adminAction(w http.ResponseWriter, r *http.Request) {
+//    render()
 }
 
 func serverSitemap(w http.ResponseWriter, r *http.Request) {
@@ -131,12 +137,14 @@ func serverSitemap(w http.ResponseWriter, r *http.Request) {
 var router = mux.NewRouter()
 
 func main() {
+
 	fmt.Println("starting server..")
 
 	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/", rootAction).Name("index")
 	router.HandleFunc("/{category}/", categoryAction).Name("category")
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
+    router.HandleFunc("/admin/", adminAction)
 
 	router.HandleFunc("/sitemap.xml", serverSitemap)
     router.HandleFunc("/robots.txt", func (w http.ResponseWriter, r *http.Request){

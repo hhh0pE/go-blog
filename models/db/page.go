@@ -90,6 +90,23 @@ func (p Page) HTMLDescription() template.HTML {
 	return template.HTML(html_description)
 }
 
+func(p Page) GetTemplates() []string {
+//    temp := Template{}
+    tstrings := []string{"templates/category.html", "templates/layout.html"}
+//    Connection.Table("templates").Where("id = ?", p.Template_id).First(&temp)
+//
+//    tstrings = append(tstrings, "templates/"+temp.File)
+//    for temp.ParentID > 0 {
+//        fmt.Println("!")
+//        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
+//        tstrings = append(tstrings, "templates/"+temp.File)
+//    }
+////
+//    fmt.Println(strings)
+
+    return tstrings
+}
+
 func (p Page) AfterUpdate() (err error) {
 	p.Parent().Updated_at = p.Updated_at
 	return nil

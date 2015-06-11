@@ -1,0 +1,280 @@
+/* Tomorrow Night Eighties Theme */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+pre {
+  background: #2d2d2d;
+  font-family: Menlo, 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.pln {
+  color: #cccccc;
+}
+
+@media screen {
+  .str {
+    color: #99cc99;
+  }
+
+  .kwd {
+    color: #cc99cc;
+  }
+
+  .com {
+    color: #999999;
+  }
+
+  .typ {
+    color: #6699cc;
+  }
+
+  .lit {
+    color: #f99157;
+  }
+
+  .pun {
+    color: #cccccc;
+  }
+
+  .opn {
+    color: #cccccc;
+  }
+
+  .clo {
+    color: #cccccc;
+  }
+
+  .tag {
+    color: #f2777a;
+  }
+
+  .atn {
+    color: #f99157;
+  }
+
+  .atv {
+    color: #66cccc;
+  }
+
+  .dec {
+    color: #f99157;
+  }
+
+  .var {
+    color: #f2777a;
+  }
+
+  .fun {
+    color: #6699cc;
+  }
+}
+@media print, projection {
+  .str {
+    color: #006600;
+  }
+
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+
+  .lit {
+    color: #004444;
+  }
+
+  .pun, .opn, .clo {
+    color: #444400;
+  }
+
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .atn {
+    color: #440044;
+  }
+
+  .atv {
+    color: #006600;
+  }
+}
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+  /* */
+}
+
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  /* */
+}
+
+/* WHITE THEME */
+
+.code-bg pre {
+	  background-color: #f8f8f8;
+}
+
+.code-bg .pln {
+  color: #333333;
+}
+
+@media screen {
+  .code-bg .str {
+    color: #dd1144;
+  }
+
+  .code-bg .kwd {
+    color: #333333;
+  }
+
+  .code-bg .com {
+    color: #999988;
+  }
+
+  .code-bg .typ {
+    color: #445588;
+  }
+
+  .code-bg .lit {
+    color: #445588;
+  }
+
+  .code-bg .pun {
+    color: #333333;
+  }
+
+  .code-bg .opn {
+    color: #333333;
+  }
+
+  .code-bg .clo {
+    color: #333333;
+  }
+
+  .code-bg .tag {
+    color: navy;
+  }
+
+  .code-bg .atn {
+    color: teal;
+  }
+
+  .code-bg .atv {
+    color: #dd1144;
+  }
+
+  .code-bg .dec {
+    color: #333333;
+  }
+
+  .code-bg .var {
+    color: teal;
+  }
+
+  .code-bg .fun {
+    color: #990000;
+  }
+}
+@media print, projection {
+  .code-bg .str {
+    color: #006600;
+  }
+
+  .code-bg .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .code-bg .com {
+    color: #600;
+    font-style: italic;
+  }
+
+  .code-bg .typ {
+    color: #404;
+    font-weight: bold;
+  }
+
+  .code-bg .lit {
+    color: #004444;
+  }
+
+  .code-bg .pun,.code-bg  .opn,.code-bg  .clo {
+    color: #444400;
+  }
+
+  .code-bg .tag {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .code-bg .atn {
+    color: #440044;
+  }
+
+  .code-bg .atv {
+    color: #006600;
+  }
+}
+
+/* Specify class=linenums on a pre to get line numbering */
+.code-bg ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+.code-bg li.L0,
+.code-bg li.L1,
+.code-bg li.L2,
+.code-bg li.L3,
+.code-bg li.L4,
+.code-bg li.L5,
+.code-bg li.L6,
+.code-bg li.L7,
+.code-bg li.L8,
+.code-bg li.L9 {
+  /* */
+}
+
+/* Alternate shading for lines */
+.code-bg li.L1,
+.code-bg li.L3,
+.code-bg li.L5,
+.code-bg li.L7,
+.code-bg li.L9 {
+  /* */
+}

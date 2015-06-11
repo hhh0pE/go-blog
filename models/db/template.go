@@ -2,5 +2,6 @@ package db
 
 type Template struct {
 	id         int
-	Name, Path string
+    ParentID int
+	Name, File string
 }
