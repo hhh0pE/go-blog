@@ -91,25 +91,15 @@ func (p Page) HTMLDescription() template.HTML {
 }
 
 func(p Page) GetTemplates() []string {
-    time_after := time.Now()
-    defer func(){
-        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
-        fmt.Printf("GetTemplates elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
-    }()
+    temp := Template{}
+    tstrings := []string{}
+    Connection.Table("templates").Where("id = ?", p.Template_id).First(&temp)
 
-
-//    temp := Template{}
-//    tstrings := []string{}
-//    Connection.Table("templates").Where("id = ?", p.Template_id).First(&temp)
-//
-//    tstrings = append(tstrings, "templates/"+temp.File)
-//    for temp.ParentID > 0 {
-//        fmt.Println("!")
-//        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
-//        tstrings = append(tstrings, "templates/"+temp.File)
-//    }
-
-    tstrings := []string{"templates/index.html", "templates/layout.html"}
+    tstrings = append(tstrings, "templates/"+temp.File)
+    for temp.ParentID > 0 {
+        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
+        tstrings = append(tstrings, "templates/"+temp.File)
+    }
 
     return tstrings
 }

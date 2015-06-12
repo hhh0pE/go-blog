@@ -14,20 +14,11 @@ import (
 )
 
 func render(model interface{}, templates []string, writer http.ResponseWriter) {
-    time_after := time.Now()
-    defer func(){
-        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
-        fmt.Printf("main.render() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
-    }()
-
 
 	template, err := template.ParseFiles(templates...)
 	if err != nil {
 		panic("Error when parsing templates " + templates[0] + "`. Error message: " + err.Error())
 	}
-
-    elapsed1 := time.Now().UnixNano() - time_after.UnixNano()
-    fmt.Printf("After parse files elapced is %f\n", float64(elapsed1)/float64(1e9))
 
     // place for middlewares
 
@@ -35,17 +26,9 @@ func render(model interface{}, templates []string, writer http.ResponseWriter) {
 	if err != nil {
 		panic("Error when execute template" + err.Error())
 	}
-
-    elapsed2 := time.Now().UnixNano() - time_after.UnixNano()
-    fmt.Printf("After execute template elapced is %f\n", float64(elapsed2)/float64(1e9))
 }
 
 func rootAction(w http.ResponseWriter, r *http.Request) {
-    time_after := time.Now()
-    defer func(){
-        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
-        fmt.Printf("main.rootAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
-    }()
 
 	homepage := models.HomePage{}
 	homepage.GetByUrl("/")
@@ -72,11 +55,6 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 
 
 func postAction(w http.ResponseWriter, r *http.Request) {
-    time_after := time.Now()
-    defer func(){
-        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
-        fmt.Printf("main.postAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
-    }()
 
 	vars := mux.Vars(r)
 	category_url, post_url := vars["category"], vars["post_url"]
@@ -117,11 +95,6 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
-    time_after := time.Now()
-    defer func(){
-        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
-        fmt.Printf("main.cagegoryAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
-    }()
 
 	vars := mux.Vars(r)
 
