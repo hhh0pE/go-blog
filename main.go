@@ -14,10 +14,20 @@ import (
 )
 
 func render(model interface{}, templates []string, writer http.ResponseWriter) {
+    time_after := time.Now()
+    defer func(){
+        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
+        fmt.Printf("main.render() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
+    }()
+
+
 	template, err := template.ParseFiles(templates...)
 	if err != nil {
 		panic("Error when parsing templates " + templates[0] + "`. Error message: " + err.Error())
 	}
+
+    elapsed1 := time.Now().UnixNano() - time_after.UnixNano()
+    fmt.Printf("After parse files elapced is %f\n", float64(elapsed1)/float64(1e9))
 
     // place for middlewares
 
@@ -25,9 +35,18 @@ func render(model interface{}, templates []string, writer http.ResponseWriter) {
 	if err != nil {
 		panic("Error when execute template" + err.Error())
 	}
+
+    elapsed2 := time.Now().UnixNano() - time_after.UnixNano()
+    fmt.Printf("After execute template elapced is %f\n", float64(elapsed2)/float64(1e9))
 }
 
 func rootAction(w http.ResponseWriter, r *http.Request) {
+    time_after := time.Now()
+    defer func(){
+        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
+        fmt.Printf("main.rootAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
+    }()
+
 	homepage := models.HomePage{}
 	homepage.GetByUrl("/")
 
@@ -50,7 +69,15 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 	render(homepage, []string{"templates/index.html", "templates/layout.html"}, w)
 }
 
+
+
 func postAction(w http.ResponseWriter, r *http.Request) {
+    time_after := time.Now()
+    defer func(){
+        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
+        fmt.Printf("main.postAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
+    }()
+
 	vars := mux.Vars(r)
 	category_url, post_url := vars["category"], vars["post_url"]
 
@@ -85,9 +112,17 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Last-Modified", post_page.Updated_at.Format(time.RFC1123))
 
 	render(post_page, post_page.GetTemplates(), w)
+
+    return
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
+    time_after := time.Now()
+    defer func(){
+        elapsed_time := time.Now().UnixNano() - time_after.UnixNano()
+        fmt.Printf("main.cagegoryAction() elapsed time: %fs\n", float64(elapsed_time)/float64(1e9))
+    }()
+
 	vars := mux.Vars(r)
 
 	category := models.Category{}
@@ -102,9 +137,6 @@ func categoryAction(w http.ResponseWriter, r *http.Request) {
 	render(category, category.GetTemplates(), w)
 }
 
-func adminAction(w http.ResponseWriter, r *http.Request) {
-//    render()
-}
 
 func serverSitemap(w http.ResponseWriter, r *http.Request) {
 	categories := models.GetAllCategories()
@@ -137,14 +169,14 @@ func serverSitemap(w http.ResponseWriter, r *http.Request) {
 var router = mux.NewRouter()
 
 func main() {
-
 	fmt.Println("starting server..")
 
-	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
+    router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/", rootAction).Name("index")
 	router.HandleFunc("/{category}/", categoryAction).Name("category")
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
-    router.HandleFunc("/admin/", adminAction)
+//    router.HandleFunc("/admin/", adminAction)
+
 
 	router.HandleFunc("/sitemap.xml", serverSitemap)
     router.HandleFunc("/robots.txt", func (w http.ResponseWriter, r *http.Request){
