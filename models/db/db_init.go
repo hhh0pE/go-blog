@@ -1,24 +1,37 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"os"
 )
 
-const (
-	DB_USER         = "blog"
-	DB_USERPASSWORD = "blogblog"
-	DB_DBNAME       = "blog"
-//	DB_HOST         = "54.93.171.33" // for development
-	DB_HOST         = "localhost" // for production
-)
+type Configuration struct {
+	DB struct {
+		User, Dbname, Password, Host string
+	}
+}
 
+var Conf Configuration
 var Connection gorm.DB
 
 func init() {
-	var err error
-	Connection, err = gorm.Open("postgres", "user="+DB_USER+" dbname="+DB_DBNAME+" host="+DB_HOST+" password="+DB_USERPASSWORD)
+
+	conf_file, err := os.Open("conf.json")
+	if err != nil {
+		panic("Error when reading configuration file")
+	}
+
+	decoder := json.NewDecoder(conf_file)
+	decode_error := decoder.Decode(&Conf)
+
+	if decode_error != nil {
+		panic(decode_error.Error())
+	}
+
+	Connection, err = gorm.Open("postgres", "user="+Conf.DB.User+" dbname="+Conf.DB.Dbname+" host="+Conf.DB.Host+" password="+Conf.DB.Password)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

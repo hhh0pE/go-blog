@@ -20,7 +20,7 @@ func render(model interface{}, templates []string, writer http.ResponseWriter) {
 		panic("Error when parsing templates " + templates[0] + "`. Error message: " + err.Error())
 	}
 
-    // place for middlewares
+	// place for middlewares
 
 	err = template.ExecuteTemplate(writer, "layout", model)
 	if err != nil {
@@ -51,8 +51,6 @@ func rootAction(w http.ResponseWriter, r *http.Request) {
 
 	render(homepage, []string{"templates/index.html", "templates/layout.html"}, w)
 }
-
-
 
 func postAction(w http.ResponseWriter, r *http.Request) {
 
@@ -91,7 +89,7 @@ func postAction(w http.ResponseWriter, r *http.Request) {
 
 	render(post_page, post_page.GetTemplates(), w)
 
-    return
+	return
 }
 
 func categoryAction(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +107,6 @@ func categoryAction(w http.ResponseWriter, r *http.Request) {
 
 	render(category, category.GetTemplates(), w)
 }
-
 
 func serverSitemap(w http.ResponseWriter, r *http.Request) {
 	categories := models.GetAllCategories()
@@ -144,17 +141,16 @@ var router = mux.NewRouter()
 func main() {
 	fmt.Println("starting server..")
 
-    router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
+	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/", rootAction).Name("index")
 	router.HandleFunc("/{category}/", categoryAction).Name("category")
 	router.HandleFunc("/{category}/{post_url}/", postAction).Name("post")
-//    router.HandleFunc("/admin/", adminAction)
-
+	//    router.HandleFunc("/admin/", adminAction)
 
 	router.HandleFunc("/sitemap.xml", serverSitemap)
-    router.HandleFunc("/robots.txt", func (w http.ResponseWriter, r *http.Request){
-        http.ServeFile(w, r, "public/robots.txt")
-    })
+	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "public/robots.txt")
+	})
 
 	err := http.ListenAndServe(":9001", router)
 	if err != nil {

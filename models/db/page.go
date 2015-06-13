@@ -90,18 +90,18 @@ func (p Page) HTMLDescription() template.HTML {
 	return template.HTML(html_description)
 }
 
-func(p Page) GetTemplates() []string {
-    temp := Template{}
-    tstrings := []string{}
-    Connection.Table("templates").Where("id = ?", p.Template_id).First(&temp)
+func (p Page) GetTemplates() []string {
+	temp := Template{}
+	tstrings := []string{}
+	Connection.Table("templates").Where("id = ?", p.Template_id).First(&temp)
 
-    tstrings = append(tstrings, "templates/"+temp.File)
-    for temp.ParentID > 0 {
-        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
-        tstrings = append(tstrings, "templates/"+temp.File)
-    }
+	tstrings = append(tstrings, "templates/"+temp.File)
+	for temp.ParentID > 0 {
+		Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
+		tstrings = append(tstrings, "templates/"+temp.File)
+	}
 
-    return tstrings
+	return tstrings
 }
 
 func (p Page) AfterUpdate() (err error) {
