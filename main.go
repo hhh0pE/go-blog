@@ -15,7 +15,6 @@ func main() {
 
     routing.RouteDirectory("assets")
 
-
     routing.Route("/", actions.Root)
     routing.Route("/{category}/", actions.Category)
     routing.Route("/{category}/{post_url}/", actions.Post)

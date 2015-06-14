@@ -3,7 +3,6 @@ package routing
 import (
     "github.com/gorilla/mux"
     "net/http"
-    "fmt"
     "github.com/hhh0pE/go-blog/models"
 )
 
@@ -13,19 +12,27 @@ func init() {
     router = mux.NewRouter()
 }
 
-func Route(pattern string, f func(*http.Request) (models.IPage, *http.Request)) {
+func Route(pattern string, action func(http.ResponseWriter, *http.Request) (models.Page, int)) {
     router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-        page_model, req := f(r)
-        fmt.Println(req)
-        render(page_model, page_model.GetTemplates(), w)
+        page_model, code := action(w, r)
 
+        if code==404 {
+            http.NotFound(w, r)
+            return
+        }
 
+        if code==301 {
+            http.Redirect(w, r, "/"+page_model.Parent().Permalink()+"/", 301)
+            return
+        }
+        if page_model!=nil {
+            render(page_model, page_model.GetTemplates(), w)
+        }
     })
 }
 
 func RouteFile(url, path string) {
     router.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Encoding", "gzip")
         http.ServeFile(w, r, path)
     })
 }

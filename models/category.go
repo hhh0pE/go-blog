@@ -9,7 +9,7 @@ type Category struct {
 
 func (c Category) GetAllPosts() []Post {
 	posts := []Post{}
-	db.Connection.Table("pages").Where("parent_id = ?", c.ID).Order("updated_at desc").Find(&posts)
+	db.Connection.Table("pages").Where("parent_id = ?", c.Id).Order("updated_at desc").Find(&posts)
 
 	return posts
 }

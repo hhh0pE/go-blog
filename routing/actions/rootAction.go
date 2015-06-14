@@ -5,14 +5,19 @@ import (
     "github.com/hhh0pE/go-blog/models"
     "time"
     "fmt"
+    "github.com/hhh0pE/go-blog/models/db"
 )
 
-func Root(r *http.Request) (models.HomePage, *http.Request) {
+func Root(w http.ResponseWriter, r *http.Request) (models.Page, int) {
 
-
+    var err error
 
     homepage := models.HomePage{}
-    homepage.GetByUrl("/")
+    homepage.Page, err = db.GetPageByUrl("/")
+
+    if err != nil {
+        return homepage, 404
+    }
 
     homepage.Posts = models.GetAllPosts()
     homepage.Categories = models.GetAllCategories()
@@ -28,7 +33,7 @@ func Root(r *http.Request) (models.HomePage, *http.Request) {
         homepage.LastViewedDate = time.Now() // by default
     }
 
-    r.AddCookie(&http.Cookie{Name: "last-viewed", Value: time.Now().Format(time.RFC3339), Expires: time.Now().AddDate(1, 0, 0)})
+    http.SetCookie(w, &http.Cookie{Name: "last-viewed", Value: time.Now().Format(time.RFC3339), Expires: time.Now().AddDate(1, 0, 0)})
 
-    return homepage, r
+    return homepage, 200
 }

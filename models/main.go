@@ -1,8 +1,9 @@
 package models
 
-type IPage interface {
+import "github.com/hhh0pE/go-blog/models/db"
+
+type Page interface {
     GetTemplates() []string
     Permalink() string
-    GetByUrl(string) error
-    GetByID(int) error
+    Parent() *db.Page
 }

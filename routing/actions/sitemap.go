@@ -4,6 +4,7 @@ import (
     "github.com/joeguo/sitemap"
     "github.com/hhh0pE/go-blog/models"
     "fmt"
+    "github.com/hhh0pE/go-blog/models/db"
 )
 
 func BuildSitemap() {
@@ -11,7 +12,7 @@ func BuildSitemap() {
     posts := models.GetAllPosts()
 
     homepage := models.HomePage{}
-    homepage.GetByUrl("/")
+    homepage.Page, _ = db.GetPageByUrl("/")
 
     sitemap_items := make([]*sitemap.Item, len(categories)+len(posts)+1)
 

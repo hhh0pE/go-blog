@@ -14,7 +14,7 @@ type Post struct {
 
 func (p Post) Next() Post {
 	next_post := Post{}
-	db.Connection.Table("pages").Where("id > ? and parent_id = ?", p.ID, p.Parent_id).First(&next_post)
+	db.Connection.Table("pages").Where("id > ? and parent_id = ?", p.Id, p.ParentID).First(&next_post)
 
 	p.Updated_at.Unix()
 	return next_post
@@ -23,7 +23,7 @@ func (p Post) Next() Post {
 func (p Post) Prev() Post {
 	prev_post := Post{}
 
-	db.Connection.Table("pages").Where("id < ? and parent_id = ?", p.ID, p.Parent_id).Order("id DESC").First(&prev_post)
+	db.Connection.Table("pages").Where("id < ? and parent_id = ?", p.Id, p.ParentID).Order("id DESC").First(&prev_post)
 
 	return prev_post
 }
@@ -38,7 +38,7 @@ func GetAllPosts() []Post {
 
 func (p Post) GetOtherInCategory() []Post {
 	other_in_cat := []Post{}
-	db.Connection.Table("pages").Where("parent_id = ? and id <> ?", p.Parent_id, p.ID).Order("viewed_count DESC").Find(&other_in_cat)
+	db.Connection.Table("pages").Where("parent_id = ? and id <> ?", p.ParentID, p.Id).Order("viewed_count DESC").Find(&other_in_cat)
 
 	return other_in_cat
 }
