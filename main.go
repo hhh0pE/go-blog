@@ -4,23 +4,22 @@ package main
 import (
 	"fmt"
 
+	"github.com/hhh0pE/go-blog/routing"
+	"github.com/hhh0pE/go-blog/routing/actions"
 	"net/http"
-    "github.com/hhh0pE/go-blog/routing"
-    "github.com/hhh0pE/go-blog/routing/actions"
-
 )
 
 func main() {
 	fmt.Println("starting server..")
 
-    routing.RouteDirectory("assets")
+	routing.RouteDirectory("assets")
 
-    routing.Route("/", actions.Root)
-    routing.Route("/{category}/", actions.Category)
-    routing.Route("/{category}/{post_url}/", actions.Post)
+	routing.Route("/", actions.Root)
+	routing.Route("/{category}/", actions.Category)
+	routing.Route("/{category}/{post_url}/", actions.Post)
 
-    routing.RouteFile("/sitemap.xml", "public/sitemap.xml")
-    routing.RouteFile("/robots.txt", "public/robots.txt")
+	routing.RouteFile("/sitemap.xml", "public/sitemap.xml")
+	routing.RouteFile("/robots.txt", "public/robots.txt")
 
 	err := http.ListenAndServe(":9001", routing.Router())
 	if err != nil {
