@@ -18,7 +18,7 @@ type Page struct {
 	Image                                      string
 }
 
-func (p *Page) GetByUrl(url_to_find string) error {
+func (p Page) GetByUrl(url_to_find string) error {
 	query := Connection.Where("url = ?", url_to_find).First(&p)
 
 	if err := query.Error; err != nil {
@@ -28,7 +28,7 @@ func (p *Page) GetByUrl(url_to_find string) error {
 	return nil
 }
 
-func (p *Page) GetByID(id_to_find int) error {
+func (p Page) GetByID(id_to_find int) error {
 	query := Connection.First(&p, id_to_find)
 
 	if err := query.Error; err != nil {
