@@ -27,7 +27,7 @@ func Post(w http.ResponseWriter, r *http.Request) (models.Page, int) {
         return nil, 404
     }
 
-    if post_page.TemplateID == 5 { // redirect
+    if post_page.GetTemplate().ID == 5 { // redirect
         return post_page, 301
     }
 

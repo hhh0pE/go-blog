@@ -16,6 +16,7 @@ type Page struct {
 	Created_at, Updated_at                     time.Time
 	ViewedCount                                int
 	Image                                      string
+    Template                                    *Template
 }
 
 func GetPageByUrl(url_to_find string) (Page, error) {
@@ -93,18 +94,22 @@ func (p Page) HTMLDescription() template.HTML {
 	return template.HTML(html_description)
 }
 
-func (p Page) GetTemplates() []string {
-	temp := Template{}
-	tstrings := []string{}
-	Connection.Table("templates").Where("id = ?", p.TemplateID).First(&temp)
+func (p Page) GetTemplate() *Template {
+    if p.Template != nil {
+        return p.Template
+    }
 
-	tstrings = append(tstrings, "templates/"+temp.File)
-	for temp.ParentID > 0 {
-		Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp)
-		tstrings = append(tstrings, "templates/"+temp.File)
-	}
+    temp := Template{}
+    Connection.Table("templates").Where("id = ?", p.TemplateID).First(&temp)
+    p.Template = &temp
 
-	return tstrings
+    if temp.ParentID > 0 {
+        temp2 := Template{}
+        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp2)
+        p.Template.Parent = &temp2
+    }
+
+    return p.Template
 }
 
 func (p Page) AfterUpdate() (err error) {

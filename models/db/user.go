@@ -1,6 +1,6 @@
 package db
 
 type User struct {
-	Fname, Lname, Email string
+	Login, Email, Role string
 	Password            string
 }

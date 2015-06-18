@@ -26,7 +26,7 @@ func Route(pattern string, action func(http.ResponseWriter, *http.Request) (mode
 			return
 		}
 		if page_model != nil {
-			render(page_model, page_model.GetTemplates(), w)
+			render(page_model, page_model.GetTemplate(), w)
 		}
 	})
 }
