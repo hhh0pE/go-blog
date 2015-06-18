@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"net/http"
     "github.com/hhh0pE/go-blog/models/db"
-    "fmt"
 )
 
 func render(model interface{}, temp *db.Template, writer http.ResponseWriter) {
