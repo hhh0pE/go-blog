@@ -6,4 +6,5 @@ type Page interface {
 	GetTemplate() *db.Template
 	Permalink() string
 	Parent() *db.Page
+	SetUser(*db.User) db.Page
 }

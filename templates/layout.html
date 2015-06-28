@@ -13,6 +13,10 @@
     {{ template "head" . }}
 </head>
 <body class="{{.PageType}}" onload="prettyPrint()">
+    {{ printf "%#v" .User }}
+    {{ if gt .User.ID 0 }}
+        Добро пожаловать, {{.User.Login}}!
+    {{ end }}
     <div class="header">
         <div class="container">
             <h1>{{.Title}}</h1>

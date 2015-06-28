@@ -11,36 +11,38 @@ import (
 )
 
 type Page struct {
-	Id, ParentID, TemplateID                 int
+	Id, ParentID, TemplateID                   int
 	Url, Title, Description, Keywords, Content string
 	Created_at, Updated_at                     time.Time
 	ViewedCount                                int
 	Image                                      string
-    Template                                    *Template
+	Template                                   *Template
+	User                                       *User
 }
 
+func SetPage(page Page)
+
 func GetPageByUrl(url_to_find string) (Page, error) {
-    p := Page{}
-    query := Connection.Where("url = ?", url_to_find).First(&p)
+	p := Page{}
+	query := Connection.Where("url = ?", url_to_find).First(&p)
 
-    if err := query.Error; err != nil {
-        return p, errors.New("Error getting page with url " + url_to_find + ". Not found in DB")
-    }
+	if err := query.Error; err != nil {
+		return p, errors.New("Error getting page with url " + url_to_find + ". Not found in DB")
+	}
 
-    return p, nil
+	return p, nil
 }
 
 func GetPageByID(id_to_find int) (Page, error) {
-    p := Page{}
-    query := Connection.First(&p, id_to_find)
+	p := Page{}
+	query := Connection.First(&p, id_to_find)
 
-    if err := query.Error; err != nil {
-        return p, errors.New("Error getting page with id#" + fmt.Sprintf("%d", id_to_find) + ". Not found in DB")
-    }
+	if err := query.Error; err != nil {
+		return p, errors.New("Error getting page with id#" + fmt.Sprintf("%d", id_to_find) + ". Not found in DB")
+	}
 
-    return p, nil
+	return p, nil
 }
-
 
 func (p Page) Parent() *Page {
 	if p.ParentID == 0 {
@@ -95,21 +97,21 @@ func (p Page) HTMLDescription() template.HTML {
 }
 
 func (p Page) GetTemplate() *Template {
-    if p.Template != nil {
-        return p.Template
-    }
+	if p.Template != nil {
+		return p.Template
+	}
 
-    temp := Template{}
-    Connection.Table("templates").Where("id = ?", p.TemplateID).First(&temp)
-    p.Template = &temp
+	temp := Template{}
+	Connection.Table("templates").Where("id = ?", p.TemplateID).First(&temp)
+	p.Template = &temp
 
-    if temp.ParentID > 0 {
-        temp2 := Template{}
-        Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp2)
-        p.Template.Parent = &temp2
-    }
+	if temp.ParentID > 0 {
+		temp2 := Template{}
+		Connection.Table("templates").Where("id = ?", temp.ParentID).First(&temp2)
+		p.Template.Parent = &temp2
+	}
 
-    return p.Template
+	return p.Template
 }
 
 func (p Page) AfterUpdate() (err error) {

@@ -10,21 +10,22 @@ import (
 )
 
 func main() {
-	fmt.Println("starting server..")
+	host := "localhost:9001"
+	fmt.Println("starting server " + host + "..")
 
 	routing.RouteDirectory("assets")
 
 	routing.Route("/", actions.Root)
-    routing.Route("/login/", actions.Login)
+	routing.Route("/login/", actions.Login)
 	routing.Route("/{category}/", actions.Category)
 	routing.Route("/{category}/{post_url}/", actions.Post)
 
 	routing.RouteFile("/sitemap.xml", "public/sitemap.xml")
 	routing.RouteFile("/robots.txt", "public/robots.txt")
 
-	err := http.ListenAndServe(":9001", routing.Router())
+	err := http.ListenAndServe(host, routing.Router())
 	if err != nil {
-		fmt.Println("Error serving port 9001")
+		fmt.Println("Error serving " + host)
 		fmt.Println(err)
 	}
 }

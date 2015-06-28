@@ -1,31 +1,31 @@
 package db
 
 import (
-    "strings"
+	"strings"
 )
 
 const TMP_DIR = "templates/"
 
 type Template struct {
-	ID, ParentID         int
-	Parent      *Template
-	Name, File string
+	ID, ParentID int
+	Parent       *Template
+	Name, File   string
 }
 
 func (t Template) ToStrings() []string {
-    stemps := []string{}
+	stemps := []string{}
 
-    stemps = append(stemps, TMP_DIR+t.File)
+	stemps = append(stemps, TMP_DIR+t.File)
 
-    temp := t
-    for temp.Parent!=nil {
-        stemps = append(stemps, TMP_DIR+temp.Parent.File)
-        temp = *temp.Parent
-    }
+	temp := t
+	for temp.Parent != nil {
+		stemps = append(stemps, TMP_DIR+temp.Parent.File)
+		temp = *temp.Parent
+	}
 
-    return stemps
+	return stemps
 }
 
 func (t Template) ToString() string {
-    return strings.Join(t.ToStrings(), ", ")
+	return strings.Join(t.ToStrings(), ", ")
 }

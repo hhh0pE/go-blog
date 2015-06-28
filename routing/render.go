@@ -2,20 +2,20 @@ package routing
 
 import (
 	"bytes"
+	"github.com/hhh0pE/go-blog/models/db"
 	"html/template"
 	"net/http"
-    "github.com/hhh0pE/go-blog/models/db"
 )
 
 func render(model interface{}, temp *db.Template, writer http.ResponseWriter) {
 
-	template, err := template.ParseFiles(temp.ToStrings()...)
+	tmpl, err := template.ParseFiles(temp.ToStrings()...)
 	if err != nil {
 		panic("Error when parsing templates " + temp.ToString() + "`. Error message: " + err.Error())
 	}
 
 	var buf bytes.Buffer
-	err = template.ExecuteTemplate(&buf, "layout", model)
+	err = tmpl.ExecuteTemplate(&buf, "layout", model)
 
 	if err != nil {
 		panic("Error when execute template" + err.Error())
