@@ -1,10 +1,8 @@
 package routing
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/hhh0pE/go-blog/models"
-	"github.com/hhh0pE/go-blog/models/db"
 	"net/http"
 	"strconv"
 )
@@ -15,22 +13,14 @@ func init() {
 	router = mux.NewRouter()
 }
 
-func Route(pattern string, action func(http.ResponseWriter, *http.Request) (models.Page, int)) {
+func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*models.Page, int)) {
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 
 		page_model, code := action(w, r)
 
-		cook, err := r.Cookie("UserID")
-		if err == nil {
-			user := db.User{}
-			uid, uid_err := strconv.Atoi(cook.Value)
-			fmt.Println(uid)
-			if uid_err == nil {
-				if user.GetByID(uid) {
-					page_model = page_model.SetUser(&user)
-				}
-				fmt.Printf("User finded! %#v\n", user)
-			}
+		if cook, err := r.Cookie("UserID"); err == nil {
+			uid, _ := strconv.Atoi(cook.Value)
+			page_model.User, _ = models.GetUserByID(uid)
 		}
 
 		if code == 404 {
@@ -43,7 +33,6 @@ func Route(pattern string, action func(http.ResponseWriter, *http.Request) (mode
 			return
 		}
 
-		fmt.Printf("%#v", page_model)
 		if page_model != nil {
 			render(page_model, page_model.GetTemplate(), w)
 		}

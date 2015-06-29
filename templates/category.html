@@ -1,9 +1,9 @@
 {{ define "title"}} {{.Title}} {{end}}
 {{ define "head"}}{{end}}
 {{ define "content"}}
-    {{if (len .Posts) gt 0 }}
+    {{if (len (AllPostsInCategory .ID)) gt 0 }}
     <div class="posts">
-        {{range .Posts}}
+        {{range AllPostsInCategory .ID}}
         <a href="/{{.Permalink}}/" class="post">
             <div class="title">{{.Title}}</div>
             <div class="description">{{.HTMLDescription}}</div>

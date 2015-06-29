@@ -14,19 +14,19 @@
 	  {{ end }}
         </div>
         <div class="views-count">
-            {{.ViewedCountText}}
+            {{ViewedCountText .ViewedCount}}
         </div>
     </div>
 
     <p>{{.HTMLContent}}</p>
 
     
-    {{if (len .GetOtherInCategory) gt 0}}
+    {{if (len (OtherPostsInThisCategory .)) gt 0}}
     <div class="category-posts">
     Другие статьи по теме "{{.Parent.Title}}":
     <ul>
-        {{range .GetOtherInCategory}}
-                <li><a href="/{{.Permalink}}/">{{.Title}}</a> ({{.ViewedCountText}})</li>
+        {{range OtherPostsInThisCategory .}}
+                <li><a href="/{{.Permalink}}/">{{.Title}}</a> ({{ViewedCountText .ViewedCount}})</li>
         {{ end }}
     </ul>
     </div>

@@ -13,8 +13,7 @@
     {{ template "head" . }}
 </head>
 <body class="{{.PageType}}" onload="prettyPrint()">
-    {{ printf "%#v" .User }}
-    {{ if gt .User.ID 0 }}
+    {{ if .User }}
         Добро пожаловать, {{.User.Login}}!
     {{ end }}
     <div class="header">

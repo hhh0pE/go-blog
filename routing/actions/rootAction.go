@@ -3,24 +3,17 @@ package actions
 import (
 	"fmt"
 	"github.com/hhh0pE/go-blog/models"
-	"github.com/hhh0pE/go-blog/models/db"
 	"net/http"
 	"time"
 )
 
-func Root(w http.ResponseWriter, r *http.Request) (models.Page, int) {
+func Root(w http.ResponseWriter, r *http.Request) (*models.Page, int) {
 
-	var err error
+	homepage, homepage_exist := models.GetPageByUrl("/")
 
-	homepage := models.HomePage{}
-	homepage.Page, err = db.GetPageByUrl("/")
-
-	if err != nil {
+	if !homepage_exist {
 		return homepage, 404
 	}
-
-	homepage.Posts = models.GetAllPosts()
-	homepage.Categories = models.GetAllCategories()
 
 	cook, err := r.Cookie("last-viewed")
 	if err == nil && cook != nil {

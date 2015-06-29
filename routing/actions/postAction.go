@@ -3,27 +3,23 @@ package actions
 import (
 	"github.com/gorilla/mux"
 	"github.com/hhh0pE/go-blog/models"
-	"github.com/hhh0pE/go-blog/models/db"
 	"net/http"
 	"time"
 )
 
-func Post(w http.ResponseWriter, r *http.Request) (models.Page, int) {
+func Post(w http.ResponseWriter, r *http.Request) (*models.Page, int) {
 
 	vars := mux.Vars(r)
 	category_url, post_url := vars["category"], vars["post_url"]
 
-	var err error
+	_, category_exist := models.GetPageByUrl(category_url)
 
-	category_page := models.Category{}
-	category_page.Page, err = db.GetPageByUrl(category_url)
-	if err != nil {
+	if !category_exist {
 		return nil, 404
 	}
 
-	post_page := models.Post{}
-	post_page.Page, err = db.GetPageByUrl(post_url)
-	if err != nil {
+	post_page, post_exist := models.GetPageByUrl(post_url)
+	if !post_exist {
 		return nil, 404
 	}
 
