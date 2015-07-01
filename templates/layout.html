@@ -17,9 +17,32 @@
     <script src="/assets/js/admin.js"></script>
     <div class="admin-panel">
         {{ if eq .PageType "post"}}
+        <div class="document_buttons">
             <input type="button" id="edit_btn" value="Edit" />
             <input type="button" style="display: none;" id="save_btn" value="Save" />
             <input type="button" style="display: none;" id="cancel_btn" value="Cancel" />
+        </div>
+        <div class="editor_buttons">
+            <input type="button" class="btn undo" value="Undo" />
+            <input type="button" class="btn redo" value="Redo" />
+            &#160;&#160;&#160;&#160;
+            <input type="button" class="btn bold" value="B" />
+            <input type="button" class="btn italic" value="I" />
+            <input type="button" class="btn underline" value="U" />
+            &#160;&#160;
+            <input type="button" class="btn h1" value="H1" />
+            <input type="button" class="btn h2" value="H2" />
+            <input type="button" class="btn h3" value="H3" />
+            <input type="button" class="btn h4" value="H4" />
+            <input type="button" class="btn clear" value="x">
+            &#160;&#160;
+            <input type="button" class="btn ol" value="OL">
+            <input type="button" class="btn ul" value="UL">
+            &#160;&#160;
+            <input type="button" class="btn code_block" value="Insert code">
+            &#160;&#160;
+
+        </div>
         {{ end }}
         <div class="text">
             <span>Hello, {{.User.Login}}! You're logged in as {{.User.Role}}.</span>
