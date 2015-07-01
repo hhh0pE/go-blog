@@ -17,8 +17,9 @@
             {{else}}
             <a href="/{{.Permalink}}/" class="post">
             {{end}}
-                <div class="title">{{.Title}}</div>
+                <h2 class="title">{{.Title}}</h2>
                 <div class="description">{{.HTMLDescription}}</div>
+                <h3 class="category">{{.Parent.Title}}</h3>
             </a>
         {{ end }}
     </div>
