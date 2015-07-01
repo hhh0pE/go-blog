@@ -9,14 +9,9 @@
         </div>
     </div>
     <div class="posts">
-        {{ $last_viewed_date := .LastViewedDate }}
 
         {{range AllPosts}}
-            {{ if gt .Updated_at.Unix $last_viewed_date.Unix}}
-            <a href="/{{.Permalink}}/" class="post new">
-            {{else}}
             <a href="/{{.Permalink}}/" class="post">
-            {{end}}
                 <h2 class="title">{{.Title}}</h2>
                 <div class="description">{{.HTMLDescription}}</div>
                 <h3 class="category">{{.Parent.Title}}</h3>

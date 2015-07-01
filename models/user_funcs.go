@@ -18,7 +18,3 @@ func GetUserByID(id int) (*User, bool) {
 	}
 	return nil, false
 }
-
-func GetCurrentUser() *User {
-	return &User{}
-}

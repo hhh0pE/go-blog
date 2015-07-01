@@ -1,8 +1,18 @@
 package models
 
+import (
+    "net/url"
+    "fmt"
+)
+
 func GetPageByUrl(url_to_find string) (*Page, bool) {
 	p := Page{}
-	query := Connection.Where("url = ?", url_to_find).First(&p)
+    url, url_parse_error := url.QueryUnescape(url_to_find)
+    if url_parse_error != nil {
+        fmt.Println("Error when parsing url in GetPageByUrl, "+url_parse_error.Error())
+    }
+
+	query := Connection.Where("url = ?", url).First(&p)
 
 	if query.Error != nil {
 		return nil, false

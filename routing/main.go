@@ -18,11 +18,6 @@ func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*mod
 
 		page_model, code := action(w, r)
 
-		if cook, err := r.Cookie("UserID"); err == nil {
-			uid, _ := strconv.Atoi(cook.Value)
-			page_model.User, _ = models.GetUserByID(uid)
-		}
-
 		if code == 404 {
 			http.NotFound(w, r)
 			return
@@ -34,6 +29,11 @@ func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*mod
 		}
 
 		if page_model != nil {
+            if cook, err := r.Cookie("UserID"); err == nil {
+                uid, _ := strconv.Atoi(cook.Value)
+                page_model.User, _ = models.GetUserByID(uid)
+            }
+
 			render(page_model, page_model.GetTemplate(), w)
 		}
 	})

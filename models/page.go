@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+    "fmt"
+    "github.com/jinzhu/gorm"
 )
 
 type Page struct {
@@ -16,7 +18,6 @@ type Page struct {
 	Image                                      string
 	Template                                   *Template
 	User                                       *User
-	LastViewedDate                             time.Time
 }
 
 //
@@ -109,11 +110,14 @@ func (p Page) CodeBG() template.HTML {
 	return template.HTML(code_blocks)
 }
 
-func (p Page) AfterUpdate() (err error) {
+func (p *Page) AfterUpdate() (err error) {
+    fmt.Println("after update!")
+    fmt.Println(p)
 	p.Parent().Updated_at = p.Updated_at
+    p.Parent().Save()
 	return nil
 }
 
-func (p Page) Save() {
-	Connection.Save(p)
+func (p *Page) Save() {
+	Connection.Save(&p)
 }

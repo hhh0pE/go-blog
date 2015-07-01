@@ -12,7 +12,7 @@ var func_map template.FuncMap
 
 func init() {
 	func_map = make(template.FuncMap)
-	func_map["User"] = models.GetCurrentUser
+//	func_map["User"] = models.GetCurrentUser
 	func_map["ViewedCountText"] = func(count int) string {
 		if count == 0 {
 			return ""
