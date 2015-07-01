@@ -227,6 +227,16 @@ body.index .header h1 {
     float: right;
 }
 
+.content[contenteditable=true] {
+      z-index: 199;
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
+      box-shadow: 0 0 24px rgba(0,0,0,0.5);
+      margin: 20px 0;
+      outline: none;
+}
+
 .admin-panel {
     position: fixed;
     z-index:100;
@@ -237,10 +247,19 @@ body.index .header h1 {
     box-shadow: 0 2px 17px rgba(0,0,0,0.5);
     width: 100%;
     background: white;
+    text-align: center;
 }
 
+.admin-panel .document_buttons {
+    float: left;
+    display: inline-block;
+}
 .admin-panel .text {
     float: right;
+    display: inline-block;
+}
+.admin-panel .editor_buttons {
+    display: none;
 }
 
 @media screen and (max-width: 1150px) {

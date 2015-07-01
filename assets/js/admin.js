@@ -13,19 +13,13 @@ function cancelEditor() {
     $(".editor_buttons").style.display = "none";
 
     var element = $("[data-editable=true]");
+    element.contentEditable = false;
+    element.removeEventListener("keydown", editorKeyPress);
 
-    var editable_elements = $$(".editable");
-    for(var i=0; i<editable_elements.length; i++) {
-        if(editable_elements[i].outerHTML.indexOf("<div")===0)
-            editable_elements[i].removeEventListener("keydown", editorKeyPress);
-        else if(editable_elements[i].outerHTML.indexOf("<pre")===0)
-            editable_elements[i].removeEventListener("keydown", codeEditorKeyPress);
-        editable_elements[i].contentEditable = false;
-    }
-
-    element.innerHTML = element.innerHTML.replace(/class="editable" contenteditable="false"/g, '');
-    element.innerHTML = element.innerHTML.replace(/<div>([\s\S]*?)<\/div>/img, "$1");
+    window.clearInterval(timer);
 }
+
+var timer
 
 window.onload = function() {
     $("#edit_btn").addEventListener("click", function(){
@@ -84,21 +78,28 @@ window.onload = function() {
         })
 
         $(".editor_buttons .btn.code_block").addEventListener("click", function(){
-            document.execCommand("insertHTML", false, "</div><pre></pre><div>");
+            document.execCommand("insertHTML", false, "<pre>\n\n</pre>");
         })
 
 
         var element = $("[data-editable=true]");
-        element.innerHTML =  "<div class=\"editable\">"+element.innerHTML.replace(/<pre.*?>([\s\S]*?)<\/pre>/img, "</div><pre class=\"editable\">$1</pre><div class=\"editable\">")
+        element.contentEditable = true;
+        element.addEventListener("keydown", editorKeyPress);
 
-        var editable_elements = $$(".editable");
-        for(var i=0; i<editable_elements.length; i++) {
-            if(editable_elements[i].outerHTML.indexOf("<div")===0)
-                editable_elements[i].addEventListener("keydown", editorKeyPress);
-            else if(editable_elements[i].outerHTML.indexOf("<pre")===0)
-                editable_elements[i].addEventListener("keydown", codeEditorKeyPress);
-            editable_elements[i].contentEditable = true;
-        }
+        element.focus();
+
+        timer = window.setInterval(function(){
+            if(element.style.border=="none")
+            {
+                element.style.border = "1px solid red";
+                element.style.padding = "9px";
+            }
+            else
+            {
+                element.style.border = "none";
+                element.style.padding = "10px";
+            }
+        },600);
     });
     $("#cancel_btn").addEventListener("click", function(){
         while(document.execCommand("undo")){}
@@ -124,16 +125,37 @@ window.onload = function() {
 }
 
 function editorKeyPress(e) {
+    console.log(e);
+    var selection = window.getSelection();
+    var eventNode = selection.getRangeAt(0).commonAncestorContainer.parentNode;
 
-    if(e.keyCode==13)
+    // for <pre> tag
+    if(eventNode.tagName=="PRE")
     {
-        e.returnValue = false;
-        document.execCommand("insertHTML", false, "\n");
+        if(e.keyCode==18)
+        {
+            e.returnValue = false;
+        }
+        if(e.keyCode==13)
+        {
+            e.returnValue = false;
+            document.execCommand("insertHTML", false, "\n");
+        }
+        if(e.keyCode==9) { // tab
+            e.returnValue = false;
+            document.execCommand("insertHTML", false, "\t");
+            return;
+        }
+        return
     }
+
+    // for another tags
     if(e.keyCode==9) { // tab
         e.returnValue = false;
         document.execCommand("insertHTML", false, "&emsp;");
+        return;
     }
+
     console.log("editor key pressed!");
 }
 
