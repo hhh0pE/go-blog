@@ -17,6 +17,7 @@ func main() {
 
 	routing.Route("/", actions.Root)
 	routing.Route("/login/", actions.Login)
+    routing.Route("/logout/", actions.Logout)
     routing.Route("/api/{entity}/", actions.Api)
 	routing.Route("/{category}/", actions.Category)
 	routing.Route("/{category}/{post_url}/", actions.Post)

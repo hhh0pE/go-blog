@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
     "fmt"
-    "github.com/jinzhu/gorm"
 )
 
 type Page struct {

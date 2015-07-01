@@ -16,6 +16,9 @@ function cancelEditor() {
     element.contentEditable = false;
     element.removeEventListener("keydown", editorKeyPress);
 
+    element.style.border = "none";
+    element.style.padding = "0";
+
     window.clearInterval(timer);
 }
 
