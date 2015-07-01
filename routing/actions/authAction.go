@@ -18,10 +18,9 @@ func Login(w http.ResponseWriter, r *http.Request) (*models.Page, int) {
 
 		if user, exist := models.UserAuthorize(username, password); exist {
 			http.SetCookie(w, &http.Cookie{Name: "UserID", Value: strconv.Itoa(user.ID), Path: "/"})
+            login_page.ParentID = 3
+            return &login_page, 301
 		}
-
-        login_page.ParentID = 3
-        return &login_page, 301
 	}
 
 	login_page.Template = &models.Template{File: "admin/login.html", Parent: &models.Template{File: "admin/layout.html"}}
