@@ -13,8 +13,12 @@ func init() {
 	router = mux.NewRouter()
 }
 
+var CurrentUser *models.User
+
 func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*models.Page, int)) {
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+
+        CurrentUser = nil
 
 		page_model, code := action(w, r)
 
@@ -31,7 +35,7 @@ func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*mod
 		if page_model != nil {
             if cook, err := r.Cookie("UserID"); err == nil {
                 uid, _ := strconv.Atoi(cook.Value)
-                page_model.User, _ = models.GetUserByID(uid)
+                CurrentUser, _ = models.GetUserByID(uid)
             }
 
 			render(page_model, page_model.GetTemplate(), w)

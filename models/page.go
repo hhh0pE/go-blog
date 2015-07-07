@@ -16,7 +16,6 @@ type Page struct {
 	ViewedCount                                int
 	Image                                      string
 	Template                                   *Template
-	User                                       *User
 }
 
 //

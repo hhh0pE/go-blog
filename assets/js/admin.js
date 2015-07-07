@@ -12,19 +12,69 @@ function cancelEditor() {
     $("#cancel_btn").style.display = "none";
     $(".editor_buttons").style.display = "none";
 
-    var element = $("[data-editable=true]");
-    element.contentEditable = false;
-    element.removeEventListener("keydown", editorKeyPress);
+    var elements = $$("[data-editable=true][data-key]");
+    for(var i=0; i<elements.length; i++)
+    {
+        var element = elements[i];
+        element.contentEditable = false;
+        element.removeEventListener("keydown", editorKeyPress);
 
-    element.style.border = "none";
-    element.style.padding = "0";
+        element.style.border = "none";
+        element.style.padding = "0";
 
-    window.clearInterval(timer);
+        var timer_id = parseInt(element.getAttribute('timer-id'));
+        window.clearInterval(timer_id);
+        element.removeAttribute('timer-id');
+    }
+
+
 }
 
-var timer
+var timer;
 
 window.onload = function() {
+    $("body[data-type=post] .admin-panel").innerHTML += '<div class="document_buttons">'+
+            '<input type="button" id="edit_btn" value="Edit" />' +
+            '<input type="button" style="display: none;" id="save_btn" value="Save" />' +
+            '<input type="button" style="display: none;" id="cancel_btn" value="Cancel" />' +
+        '</div>';
+
+    $("body[data-type=post] .admin-panel").innerHTML += '<div class="editor_buttons">' +
+         '<input type="button" data-command="undo" class="btn" value="Undo" />' +
+        '<input type="button" data-command="redo" class="btn" value="Redo" />' +
+        '&#160;&#160;&#160;&#160;' +
+        '<input type="button" data-command="bold" class="btn" value="B" />' +
+        '<input type="button" data-command="italic" class="btn" value="I" />' +
+        '<input type="button" data-command="underline" class="btn" value="U" />' +
+        '&#160;&#160;' +
+        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H1" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H2" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H3" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H4" />' +
+        '<input type="button" data-command="formatBlock" data-argument="p" class="btn" value="x">' +
+        '&#160;&#160;' +
+        '<input type="button" data-command="insertOrderedList" class="btn" value="OL">' +
+        '<input type="button" data-command="insertUnorderedList" class="btn" value="UL">' +
+        '&#160;&#160;' +
+        '<input type="button" data-command="insertCode" class="btn" value="Insert code">' +
+        '&#160;&#160;' +
+     '</div>';
+
+     var buttons = $$('.editor_buttons .btn');
+     for(var i=0; i<buttons.length; i++)
+         buttons[i].addEventListener("click", function(){
+               var command = this.getAttribute('data-command');
+               var argument = this.getAttribute('data-argument');
+
+               if(command=="insertCode")
+               {
+                     document.execCommand("insertHTML", false, '<pre>\n\n</pre>');
+                     return;
+               }
+
+               document.execCommand(this.getAttribute('data-command'), false, this.getAttribute('data-argument'));
+           });
+
     $("#edit_btn").addEventListener("click", function(){
         $("#edit_btn").style.display = "none";
         $("#save_btn").style.display = "inline-block";
@@ -32,77 +82,46 @@ window.onload = function() {
 
         $(".editor_buttons").style.display = "inline-block";
 
-        $(".editor_buttons .btn.undo").addEventListener("click", function(){
-            document.execCommand("undo", false, null);
-        })
 
-        $(".editor_buttons .btn.redo").addEventListener("click", function(){
-            document.execCommand("redo", false, null);
-        })
+        var elements = $$("[data-editable=true][data-key]");
+        for(var i=0; i<elements.length; i++)
+        {
+            var element = elements[i];
+            element.contentEditable = true;
+            element.addEventListener("keydown", editorKeyPress);
+            element.addEventListener("focus", function(){
+                if(this.getAttribute('data-panel')=="false")
+                    $('.editor_buttons').style.display = "none";
+                else
+                    $('.editor_buttons').style.display = "inline-block";
+            });
 
-        $(".editor_buttons .btn.bold").addEventListener("click", function(){
-            document.execCommand("bold", false, null);
-        })
+            element.style.outline = "none";
 
-        $(".editor_buttons .btn.italic").addEventListener("click", function(){
-            document.execCommand("italic", false, null);
-        })
+            element.focus();
 
-        $(".editor_buttons .btn.underline").addEventListener("click", function(){
-            document.execCommand("underline", false, null);
-        })
+            var timer_id = window.setInterval(function(){
+                var elements = $$("[data-editable=true][data-key]");
+                for(var i=0; i<elements.length; i++)
+                {
+                    var element = elements[i];
+                    if(element.style.border=="none")
+                    {
+                        element.style.border = "1px solid red";
+                        element.style.padding = "9px";
+                    }
+                    else
+                    {
+                        element.style.border = "none";
+                        element.style.padding = "10px";
+                    }
+                }
 
-        $(".editor_buttons .btn.h1").addEventListener("click", function(){
-            document.execCommand("formatBlock", false, "h1");
-        })
+            },600);
 
-        $(".editor_buttons .btn.h2").addEventListener("click", function(){
-             document.execCommand("formatBlock", false, "h2");
-        })
+            element.setAttribute('timer-id', timer_id);
+        }
 
-        $(".editor_buttons .btn.h3").addEventListener("click", function(){
-             document.execCommand("formatBlock", false, "h3");
-        })
-
-        $(".editor_buttons .btn.h4").addEventListener("click", function(){
-            document.execCommand("formatBlock", false, "h4");
-        })
-
-        $(".editor_buttons .btn.clear").addEventListener("click", function(){
-            document.execCommand("formatBlock", false, "p");
-        })
-
-        $(".editor_buttons .btn.ol").addEventListener("click", function(){
-            document.execCommand("insertOrderedList", false, false);
-        })
-
-        $(".editor_buttons .btn.ul").addEventListener("click", function(){
-            document.execCommand("insertUnorderedList", false, false);
-        })
-
-        $(".editor_buttons .btn.code_block").addEventListener("click", function(){
-            document.execCommand("insertHTML", false, "<pre>\n\n</pre>");
-        })
-
-
-        var element = $("[data-editable=true]");
-        element.contentEditable = true;
-        element.addEventListener("keydown", editorKeyPress);
-
-        element.focus();
-
-        timer = window.setInterval(function(){
-            if(element.style.border=="none")
-            {
-                element.style.border = "1px solid red";
-                element.style.padding = "9px";
-            }
-            else
-            {
-                element.style.border = "none";
-                element.style.padding = "10px";
-            }
-        },600);
     });
     $("#cancel_btn").addEventListener("click", function(){
         while(document.execCommand("undo")){}
@@ -112,14 +131,27 @@ window.onload = function() {
     $("#save_btn").addEventListener("click", function(){
         cancelEditor();
 
-        var content = document.querySelector("[data-editable=true]").innerHTML;
-
-        console.log(content);
+        var elements = $$("[data-editable=true][data-key]");
 
         var data = new FormData();
-        data.append("content", content);
+        for(var i=0; i<elements.length; i++)
+        {
+            var element = elements[i];
+            var key = element.getAttribute('data-key');
+            var value = element.innerHTML;
+
+            data.append(key, value);
+        }
 
         var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange=function()
+          {
+          if (xhr.readyState==4 && xhr.status==200)
+            {
+//                window.location.reload();
+            }
+          }
 
         xhr.open("POST", "/api/post/", false);
 //        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -128,7 +160,6 @@ window.onload = function() {
 }
 
 function editorKeyPress(e) {
-    console.log(e);
     var selection = window.getSelection();
     var eventNode = selection.getRangeAt(0).commonAncestorContainer.parentNode;
 
@@ -145,8 +176,13 @@ function editorKeyPress(e) {
             document.execCommand("insertHTML", false, "\n");
         }
         if(e.keyCode==9) { // tab
+            var selection = window.getSelection();
             e.returnValue = false;
-            document.execCommand("insertHTML", false, "\t");
+            if(selection.toString().length>0)
+            {
+                document.execCommand("insertHTML", false, selection.toString().replace(/^([\s\S]*?)$/gm, "\t$1"));
+            } else
+                document.execCommand("insertHTML", false, "\t");
             return;
         }
         return
@@ -158,22 +194,4 @@ function editorKeyPress(e) {
         document.execCommand("insertHTML", false, "&emsp;");
         return;
     }
-
-    console.log("editor key pressed!");
-}
-
-function codeEditorKeyPress(e) {
-    var selection = window.getSelection();
-    var selection2 = selection;
-    if(e.keyCode==9) { // tab
-        e.returnValue = false;
-        if(selection.toString().length>0)
-        {
-            console.log("tab with selection");
-            document.execCommand("insertHTML", false, selection.toString().replace(/^([\s\S]*?)$/gm, "\t$1"));
-        } else
-            document.execCommand("insertHTML", false, "\t");
-    }
-    console.log(selection, selection2);
-    console.log("code editor key pressed!");
 }

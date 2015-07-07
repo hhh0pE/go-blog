@@ -12,7 +12,6 @@ var func_map template.FuncMap
 
 func init() {
 	func_map = make(template.FuncMap)
-//	func_map["User"] = models.GetCurrentUser
 	func_map["ViewedCountText"] = func(count int) string {
 		if count == 0 {
 			return ""
@@ -33,6 +32,10 @@ func init() {
 	func_map["AllPostsInCategory"] = models.AllPostsInCategory
 	func_map["AllCategories"] = models.AllCategories
 	func_map["AllPosts"] = models.AllPosts
+    func_map["IsProduction"] = models.IsProduction
+    func_map["CurrentUser"] = func() *models.User {
+        return CurrentUser
+    }
 
 }
 

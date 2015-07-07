@@ -12,10 +12,15 @@ type Configuration struct {
 	DB struct {
 		User, Dbname, Password, Host string
 	}
+    Environment     string
 }
 
 var Conf Configuration
 var Connection gorm.DB
+
+func IsProduction() bool {
+    return Conf.Environment == "production"
+}
 
 func init() {
 

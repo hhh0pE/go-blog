@@ -51,6 +51,6 @@ func AllCategories() []Page {
 
 func AllPosts() []Page {
 	all_posts := []Page{}
-	Connection.Table("pages").Where("template_id = 2").Order("updated_at desc").Order("id").Find(&all_posts)
+	Connection.Table("pages").Where("template_id = 2").Order("created_at desc").Order("id").Find(&all_posts)
 	return all_posts
 }

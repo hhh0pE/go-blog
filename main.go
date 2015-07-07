@@ -7,9 +7,13 @@ import (
 	"github.com/hhh0pE/go-blog/routing"
 	"github.com/hhh0pE/go-blog/routing/actions"
 	"net/http"
+    _ "net/http/pprof"
 )
 
 func main() {
+    go func() {
+        fmt.Println(http.ListenAndServe("localhost:9002", nil))
+    }()
 	host := "localhost:9001"
 	fmt.Println("starting server " + host + "..")
 
