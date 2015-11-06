@@ -26,10 +26,10 @@ type Page struct {
 //}
 
 func (p Page) PageType() string {
-	var page_type string
-	Connection.Table("templates").Select("name").Where("id = ?", p.TemplateID).Row().Scan(&page_type)
-
-	return page_type
+    if p.Template == nil {
+        return p.GetTemplate().Name
+    }
+    return p.Template.Name
 }
 
 func (p Page) Parent() *Page {
@@ -45,6 +45,17 @@ func (p Page) Parent() *Page {
 	}
 
 	return &parent_page
+}
+
+func (p Page) ChildrenByCreatedAt() *[]Page {
+	children := []Page{}
+	query := Connection.Where("parent_id = ?", p.ID).Order("created_at DESC").Find(&children)
+
+	if query.RowsAffected == 0 {
+		return nil
+	}
+
+	return &children
 }
 
 func (p Page) Children() *[]Page {
@@ -74,14 +85,17 @@ func (p Page) HTMLContent() template.HTML {
 }
 
 func (p Page) MetaDescription() string {
+    r, _ := regexp.Compile("<p>(.*?)</p>")
+    p.Description = r.ReplaceAllString(p.Description, "$1")
 	return strings.Replace(p.Description, "\n", " ", -1)
 }
 
 func (p Page) HTMLDescription() template.HTML {
-	r, _ := regexp.Compile("(?mi)(.*?)$")
-	html_description := r.ReplaceAllString(p.Description, "<p>$1</p>")
-	//    fmt.Println(html_description)
-	return template.HTML(html_description)
+    return template.HTML(p.Description)
+//	r, _ := regexp.Compile("(?mi)(.*?)$")
+//	html_description := r.ReplaceAllString(p.Description, "<p>$1</p>")
+//	//    fmt.Println(html_description)
+//	return template.HTML(html_description)
 }
 
 func (p Page) GetTemplate() *Template {
@@ -118,4 +132,8 @@ func (p *Page) AfterUpdate() (err error) {
 
 func (p *Page) Save() {
 	Connection.Save(&p)
+}
+
+func (p *Page) Create() {
+    Connection.Create(p)
 }

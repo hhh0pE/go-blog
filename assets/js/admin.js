@@ -1,9 +1,19 @@
 function $(selector) {
-    return document.querySelector(selector);
+    var result = document.querySelector(selector);
+    if(result == null) {
+        console.warn('Nothing found by selector "'+selector+'"');
+        return '';
+    }
+    return result;
 }
 
 function $$(selector) {
-    return document.querySelectorAll(selector);
+    var result = document.querySelectorAll(selector);
+    if(result == null) {
+        console.warn('Nothing found by selector "'+selector+'"');
+        return '';
+    }
+    return result;
 }
 
 function cancelEditor() {
@@ -33,13 +43,13 @@ function cancelEditor() {
 var timer;
 
 window.onload = function() {
-    $("body[data-type=post] .admin-panel").innerHTML += '<div class="document_buttons">'+
+    $("body[data-type=post] .admin-panel, body[data-type=new] .admin-panel").innerHTML += '<div class="document_buttons">'+
             '<input type="button" id="edit_btn" value="Edit" />' +
             '<input type="button" style="display: none;" id="save_btn" value="Save" />' +
             '<input type="button" style="display: none;" id="cancel_btn" value="Cancel" />' +
         '</div>';
 
-    $("body[data-type=post] .admin-panel").innerHTML += '<div class="editor_buttons">' +
+    $("body[data-type=post] .admin-panel, body[data-type=new] .admin-panel").innerHTML += '<div class="editor_buttons">' +
          '<input type="button" data-command="undo" class="btn" value="Undo" />' +
         '<input type="button" data-command="redo" class="btn" value="Redo" />' +
         '&#160;&#160;&#160;&#160;' +
@@ -48,9 +58,9 @@ window.onload = function() {
         '<input type="button" data-command="underline" class="btn" value="U" />' +
         '&#160;&#160;' +
         '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H1" />' +
-        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H2" />' +
-        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H3" />' +
-        '<input type="button" data-command="formatBlock" data-argument="h1" class="btn" value="H4" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h2" class="btn" value="H2" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h3" class="btn" value="H3" />' +
+        '<input type="button" data-command="formatBlock" data-argument="h4" class="btn" value="H4" />' +
         '<input type="button" data-command="formatBlock" data-argument="p" class="btn" value="x">' +
         '&#160;&#160;' +
         '<input type="button" data-command="insertOrderedList" class="btn" value="OL">' +
@@ -59,6 +69,14 @@ window.onload = function() {
         '<input type="button" data-command="insertCode" class="btn" value="Insert code">' +
         '&#160;&#160;' +
      '</div>';
+     
+
+     if($("body[data-type=new]")) {
+        window.setInterval(function(){
+            var date = new Date();
+            $(".date strong").innerHTML = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        },1000)
+     }
 
      var buttons = $$('.editor_buttons .btn');
      for(var i=0; i<buttons.length; i++)
@@ -140,6 +158,10 @@ window.onload = function() {
             var key = element.getAttribute('data-key');
             var value = element.innerHTML;
 
+            console.log('before', value);
+            value = value.replace(/[\s]*<[a-zA-Z]+>[\s]*<\/[a-zA-Z]>[\s]*/g, '');
+            console.log('after', value);
+
             data.append(key, value);
         }
 
@@ -188,10 +210,5 @@ function editorKeyPress(e) {
         return
     }
 
-    // for another tags
-    if(e.keyCode==9) { // tab
-        e.returnValue = false;
-        document.execCommand("insertHTML", false, "&emsp;");
-        return;
-    }
+
 }

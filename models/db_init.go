@@ -40,4 +40,7 @@ func init() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+    if !IsProduction() {
+        Connection.LogMode(true)
+    }
 }

@@ -1,10 +1,11 @@
 package routing
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/hhh0pE/go-blog/models"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/hhh0pE/go-blog/models"
 )
 
 var router *mux.Router
@@ -15,30 +16,35 @@ func init() {
 
 var CurrentUser *models.User
 
+func RouteFunc(pattern string, action func(http.ResponseWriter, *http.Request)) {
+	router.HandleFunc(pattern, action)
+}
+
 func Route(pattern string, action func(http.ResponseWriter, *http.Request) (*models.Page, int)) {
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 
-        CurrentUser = nil
-
-		page_model, code := action(w, r)
-
-		if code == 404 {
-			http.NotFound(w, r)
-			return
+		CurrentUser = nil
+		if cook, err := r.Cookie("UserID"); err == nil {
+			uid, _ := strconv.Atoi(cook.Value)
+			CurrentUser, _ = models.GetUserByID(uid)
 		}
+
+		pageModel, code := action(w, r)
 
 		if code == 301 {
-			http.Redirect(w, r, "/"+page_model.Parent().Permalink()+"/", 301)
+			http.Redirect(w, r, "/"+pageModel.Parent().Permalink()+"/", 301)
 			return
 		}
 
-		if page_model != nil {
-            if cook, err := r.Cookie("UserID"); err == nil {
-                uid, _ := strconv.Atoi(cook.Value)
-                CurrentUser, _ = models.GetUserByID(uid)
-            }
+		if code == 404 {
+			if CurrentUser == nil || CurrentUser.Role != "admin" {
+				http.NotFound(w, r)
+				return
+			}
+		}
 
-			render(page_model, page_model.GetTemplate(), w)
+		if pageModel != nil {
+			render(pageModel, pageModel.GetTemplate(), w)
 		}
 	})
 }

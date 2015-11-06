@@ -114,16 +114,26 @@ body.index .header h1 {
 }
 
 .page-content .category-posts {
-      border: 1px dotted black;
       padding: 20px;
-      border-style: dashed;
       display: inline-block;
       vertical-align: top;
+      position: absolute;
+      left: 0;
+      background: white;
 }
 
 .page-content .category-posts ul {
       margin: 0;
       display: inline-block;
+      width: 100%;
+      margin-top: 2px;
+      list-style-type: square;
+}
+
+.page-content .category-posts ul li .counter {
+    font-size: 14px;
+    color: gray;
+    margin-left: 10px;
 }
 
 .blog-info > div {
@@ -227,7 +237,7 @@ body.index .header h1 {
     float: right;
 }
 
-.content[contenteditable=true] {
+[contenteditable=true] {
       z-index: 199;
       position: relative;
       overflow: hidden;
@@ -235,6 +245,7 @@ body.index .header h1 {
       box-shadow: 0 0 24px rgba(0,0,0,0.5);
       margin: 20px 0;
       outline: none;
+      border: 1px solid red;
 }
 
 .admin-panel {

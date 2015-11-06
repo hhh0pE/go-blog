@@ -43,6 +43,8 @@ func render(model interface{}, temp *models.Template, writer http.ResponseWriter
 
 	tmpl := template.New(temp.Name).Funcs(func_map)
 
+    fmt.Println(temp.ToString())
+
 	var err error
 	tmpl, err = tmpl.ParseFiles(temp.ToStrings()...)
 	if err != nil {
